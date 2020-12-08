@@ -1,6 +1,7 @@
 
 require_relative '../lib/chess'
 require_relative '../lib/board'
+require_relative '../lib/player'
 require_relative '../lib/ChessConstants'
 
 require_relative '../lib/pieces/piece'
@@ -16,3 +17,9 @@ game = Chess.new
 game.place_pieces
 system 'clear'
 puts game.board_obj
+
+while true
+  game.move_piece
+  puts game.board_obj
+end
+
