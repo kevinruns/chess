@@ -59,20 +59,56 @@ class Chess
     end
   end
 
+  # MOVE FUNCTION : Calls many others;   NEED TO ADD PLAYER
+  def move_piece
+    piece, move_array = select_piece(@player_one)
+    old_position = piece.position
+    new_position = select_position(move_array)
+    piece.position = new_position
+    board_obj.board[old_position[0]][old_position[1]] = " "
+    board_obj.board[new_position[0]][new_position[1]] = piece
+  end
+
+  def select_piece(player)
+    piece = ""
+    move_array = []
+    until defined?(piece.colour) && valid_piece?(player, piece) && move_array.length.positive?
+      piece_input = prompt_for_piece
+      piece_pos = format_coords(piece_input)
+      rank = piece_pos[0]
+      file = piece_pos[1]
+      next unless rank.between?(0, 7) && file.between?(0, 7) && @board_obj.board[rank][file] != " "
+
+      piece = @board_obj.board[rank][file]
+      move_array = allowed_moves(piece)
+
+    end
+    [piece, move_array]
+  end
+
+  ####  NEXT WORK; CHECK MOVES ON BOARD; MULTI SQUARE MOVES
+  def allowed_moves(piece)
+    move_array = piece.all_moves(piece.position)
+    square_onboard_empty(move_array)
+  end
+
+  def square_onboard_empty(move_array)
+    move_array.select { |coord| coord[0].between?(0, 7) && coord[1].between?(0, 7) }
+    move_array.select { |coord| @board_obj.board[coord[0]][coord[1]] == " " }
+  end
+
+  def valid_piece?(player, piece)
+    player.colour == piece.colour
+  end
+
   def select_position(move_array)
     position = 0
     until move_array.include?(position)
       position_str = prompt_move_square
       position = format_coords(position_str)
-      p "selected position #{position}"
     end
     position
   end
-
-  def check_squares_empty(move_array)
-    move_array.select { |coord| @board_obj.board[coord[0]][coord[1]] == " "}
-  end
-
 
   def format_coords(coords)
     coord_array = coords.split('')
@@ -82,44 +118,10 @@ class Chess
     [rank, file]
   end
 
-  def select_piece(player)
-    piece = ""
-    move_array = []
-    until defined?(piece.colour) && valid_piece?(player, piece) && move_array.length > 0
-      piece_input = prompt_for_piece
-      piece_pos = format_coords(piece_input)
-      p piece_pos
-      rank = piece_pos[0]
-      file = piece_pos[1]
-      next unless rank.between?(0, 7) && file.between?(0, 7) && @board_obj.board[rank][file] != " "
-
-      piece = @board_obj.board[rank][file]
-      move_array = piece.all_moves(piece.position)
-      move_array = check_squares_empty(move_array)
-    end
-    [piece, move_array]
-  end
-
-  def valid_piece?(player, piece)
-    player.colour == piece.colour
-  end
-
-# MOVE FUNCTION : Calls many others;   NEED TO ADD PLAYER
-  def move_piece()
-    piece, move_array = select_piece(@player_one)
-    old_position = piece.position
-    p "old_position #{old_position}"
-    new_position = select_position(move_array)
-    p new_position
-    piece.position = new_position
-    board_obj.board[old_position[0]][old_position[1]] = " "
-    board_obj.board[new_position[0]][new_position[1]] = piece
-  end
 
   def print_board
     @board_obj.print_board
   end
-
 
   # main method for assigning start and target and initiating moves
   def knight_moves(start, target)
