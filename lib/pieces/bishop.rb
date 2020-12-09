@@ -11,14 +11,10 @@ class Bishop < Piece
   def all_moves(position = @position)
     moves = []
 
-    p moves
-    moves.concat(diag_up_right) if diag_up_right.length.positive?
-    p moves
-    moves.concat(diag_up_left) if diag_up_left.length.positive?
-    p moves
-    moves.concat(diag_down_right) if diag_down_right.length.positive?
-    p moves
-    moves.concat(diag_down_left) if diag_down_left.length.positive?
+    moves << diag_up_right if diag_up_right.length.positive?
+    moves << diag_up_left if diag_up_left.length.positive?
+    moves << diag_down_right if diag_down_right.length.positive?
+    moves << diag_down_left if diag_down_left.length.positive?
     p moves
     moves
   end
