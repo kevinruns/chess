@@ -81,6 +81,7 @@ class Chess
 
       piece = @board_obj.board[rank][file]
       move_array = allowed_moves(piece)
+      p move_array
 
     end
     [piece, move_array]
@@ -93,8 +94,20 @@ class Chess
   end
 
   def square_onboard_empty(move_array)
-    move_array.select { |coord| coord[0].between?(0, 7) && coord[1].between?(0, 7) }
-    move_array.select { |coord| @board_obj.board[coord[0]][coord[1]] == " " }
+    new_move_array = []
+    p "move array: #{move_array}"
+    move_array.each do |direction_array|
+      direction_array.select { |coord| coord[0].between?(0, 7) && coord[1].between?(0, 7) }
+      #direction_array.select { |coord| @board_obj.board[coord[0]][coord[1]] == " " }
+      p "direction array: #{direction_array}"
+      direction_array.each do |move_square|
+        p move_square
+        p @board_obj.board[move_square[0]][move_square[1]]
+        break if @board_obj.board[move_square[0]][move_square[1]] != " "
+        new_move_array << move_square
+      end
+    end
+    new_move_array
   end
 
   def valid_piece?(player, piece)
