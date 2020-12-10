@@ -1,7 +1,7 @@
 require_relative '../lib/board'
 require_relative '../lib/ChessConstants'
 require_relative '../lib/chess'
-# require_relative '../lib/main'
+require_relative '../lib/player'
 require_relative '../lib/pieces/piece'
 require_relative '../lib/pieces/rook'
 require_relative '../lib/pieces/king'
@@ -28,10 +28,46 @@ describe Chess do
         (board_start[7] ||= []) << ChessConstants::PIECE_CODES.dig(piece, :BLACK)
       end
     end
-    it 'expect true' do
-      expect(game.board_obj.board).to eq(board_start)
+    it 'pieces set up correctly' do
+      game.board_obj.board.each_with_index do |_board, i|
+        game.board_obj.board[i].each_with_index do |_board, j|
+          if i < 2 || i > 5
+            expect(game.board_obj.board[i][j].code).to eq(board_start[i][j])
+          else
+            expect(game.board_obj.board[i][j]).to eq(board_start[i][j])
+          end
+        end
+      end
     end
   end
+
+  context 'move pieces' do
+    board_start = []
+    before do
+      game.place_pieces
+      game.move_piece([[1, 3], [3, 3]])
+      game.move_piece([[0, 2], [4, 6]])
+#      puts game.board_obj
+    end
+
+    it 'check pawn allowed moves' do
+      piece = game.board_obj.board[3][3]
+      expect(game.allowed_moves(piece)).to eq([[4, 3]])
+    end
+
+    it 'check bishop allowed moves' do
+      piece = game.board_obj.board[4][6]
+      expect(game.allowed_moves(piece)).to eq([[5, 7], [5, 5], [3, 7], [3, 5], [2, 4], [1, 3], [0, 2]])
+    end
+  end
+
+
+
+
+
+
+
+
 
 
   # describe '#placing pieces' do

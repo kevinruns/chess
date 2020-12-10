@@ -1,7 +1,7 @@
 require_relative '../lib/board'
 require_relative '../lib/ChessConstants'
 require_relative '../lib/chess'
-# require_relative '../lib/main'
+require_relative '../lib/player'
 require_relative '../lib/pieces/piece'
 require_relative '../lib/pieces/rook'
 require_relative '../lib/pieces/king'
@@ -33,7 +33,7 @@ describe Board do
         it 'expect true' do
           pawn1_board = Marshal.load(Marshal.dump(empty_board))
           pawn1_board[2][6] = ChessConstants::PIECE_CODES.dig(:PAWN, :WHITE)
-          game_board.write(3, 7, ChessConstants::PIECE_CODES.dig(:PAWN, :WHITE))
+          game_board.write(2, 6, ChessConstants::PIECE_CODES.dig(:PAWN, :WHITE))
           expect(game_board.board).to eq(pawn1_board)
         end
       end
@@ -42,20 +42,18 @@ describe Board do
     describe '#square empty' do
       context 'test for empty' do
         it 'expect true' do
-          game_board.write(8, 5, ChessConstants::PIECE_CODES.dig(:PAWN, :WHITE))
-          expect(game_board.square_empty([8, 5])).to eq(false)
+          game_board.write(7, 4, ChessConstants::PIECE_CODES.dig(:PAWN, :WHITE))
+          expect(game_board.square_empty([7, 4])).to eq(false)
         end
       end
 
       context 'test for not empty' do
         it 'expect true' do
-          game_board.write(8, 4, ChessConstants::PIECE_CODES.dig(:PAWN, :WHITE))
-          expect(game_board.square_empty([8, 5])).to eq(true)
+          game_board.write(7, 3, ChessConstants::PIECE_CODES.dig(:PAWN, :WHITE))
+          expect(game_board.square_empty([7, 4])).to eq(true)
         end
       end
-
     end
-
   end
 
   # describe '#placing pieces' do
