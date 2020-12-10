@@ -60,15 +60,22 @@ class Chess
   end
 
   # MOVE FUNCTION : Calls many others;   NEED TO ADD PLAYER
-  def move_piece
-    piece, move_array = select_piece(@player_one)
-    old_position = piece.position
+  def select_and_move
+    old_position, move_array = select_piece(@player_one)
     new_position = select_position(move_array)
-    piece.position = new_position
+    [old_position, new_position]
+  end
+
+  def move_piece( position_array )
+    old_position = position_array[0]
+    new_position = position_array[1]
+    piece = board_obj.board[old_position[0]][old_position[1]]
     board_obj.board[old_position[0]][old_position[1]] = " "
+    piece.position = new_position
     board_obj.board[new_position[0]][new_position[1]] = piece
   end
 
+  # method to select piece to move; returns piece position & possible moves
   def select_piece(player)
     piece = ""
     move_array = []
@@ -81,10 +88,9 @@ class Chess
 
       piece = @board_obj.board[rank][file]
       move_array = allowed_moves(piece)
-      p move_array
 
     end
-    [piece, move_array]
+    [piece.position, move_array]
   end
 
   ####  NEXT WORK; CHECK MOVES ON BOARD; MULTI SQUARE MOVES
@@ -95,15 +101,11 @@ class Chess
 
   def square_onboard_empty(move_array)
     new_move_array = []
-    p "move array: #{move_array}"
     move_array.each do |direction_array|
       direction_array.select { |coord| coord[0].between?(0, 7) && coord[1].between?(0, 7) }
-      #direction_array.select { |coord| @board_obj.board[coord[0]][coord[1]] == " " }
-      p "direction array: #{direction_array}"
       direction_array.each do |move_square|
-        p move_square
-        p @board_obj.board[move_square[0]][move_square[1]]
         break if @board_obj.board[move_square[0]][move_square[1]] != " "
+
         new_move_array << move_square
       end
     end
