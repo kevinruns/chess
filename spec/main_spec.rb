@@ -55,10 +55,27 @@ describe Chess do
       expect(game.allowed_moves(piece)).to eq([[4, 3]])
     end
 
-    it 'check bishop allowed moves' do
+    it 'check bishop allowed moves 4 directions' do
       piece = game.board_obj.board[4][6]
       expect(game.allowed_moves(piece)).to eq([[5, 7], [5, 5], [3, 7], [3, 5], [2, 4], [1, 3], [0, 2]])
     end
+
+    it 'check bishop allowed moves 1 direction' do
+      game.move_piece([[4, 6], [5, 7]])
+      piece = game.board_obj.board[5][7]
+      expect(game.allowed_moves(piece)).to eq([[4, 6], [3, 5], [2, 4], [1, 3], [0, 2]])
+    end
+
+    it 'check queen move all directions' do
+      game.move_piece([[0, 3], [2, 3]])
+      game.move_piece([[2, 3], [4, 1]])
+      piece = game.board_obj.board[4][1]
+      expect(game.allowed_moves(piece)).to eq([[5, 2], [5, 0], [3, 2], [2, 3], [3, 0],
+                                               [4, 2], [4, 3], [4, 4], [4, 5], [4, 0],
+                                               [5, 1], [3, 1], [2, 1]])
+    end
+
+
   end
 
 
