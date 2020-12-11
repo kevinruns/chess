@@ -102,7 +102,7 @@ class Chess
   def square_onboard_empty(move_array)
     new_move_array = []
     move_array.each do |direction_array|
-      direction_array.select { |coord| coord[0].between?(0, 7) && coord[1].between?(0, 7) }
+      direction_array.select! { |coord| (coord[0].between?(0, 7) && coord[1].between?(0, 7)) }
       direction_array.each do |move_square|
         break if @board_obj.board[move_square[0]][move_square[1]] != " "
 
@@ -132,7 +132,6 @@ class Chess
     rank = coord_array[1].to_i.between?(1, 8) ? coord_array[1].to_i - 1 : -1
     [rank, file]
   end
-
 
   def print_board
     @board_obj.print_board
