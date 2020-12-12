@@ -3,9 +3,9 @@ require_relative '../lib/ChessConstants'
 require_relative '../lib/chess'
 require_relative '../lib/player'
 require_relative '../lib/pieces/piece'
+require_relative '../lib/pieces/queen'
 require_relative '../lib/pieces/rook'
 require_relative '../lib/pieces/king'
-require_relative '../lib/pieces/queen'
 require_relative '../lib/pieces/pawn'
 require_relative '../lib/pieces/bishop'
 require_relative '../lib/pieces/knight'
@@ -41,7 +41,7 @@ describe Chess do
     end
   end
 
-  context 'move pieces' do
+  context 'move pieces, white only' do
     board_start = []
     before do
       game.place_pieces
@@ -75,10 +75,56 @@ describe Chess do
                                                [5, 1], [3, 1], [2, 1]])
     end
 
-
+    it 'check knight move from a4' do
+      game.move_piece([[0, 1], [2, 2]])
+      game.move_piece([[2, 2], [3, 0]])
+      piece = game.board_obj.board[3][0]
+      expect(game.allowed_moves(piece)).to eq([[5, 1], [4, 2], [2, 2]])
+    end
   end
 
 
+  context 'move pieces, black and white' do
+    board_start = []
+    before do
+      game.place_pieces
+      game.move_piece([[1, 3], [3, 3]])
+      game.move_piece([[0, 2], [4, 6]])
+      game.move_piece([[4, 6], [5, 7]])
+      game.move_piece([[0, 3], [2, 3]])
+      game.move_piece([[2, 3], [4, 1]])
+      game.move_piece([[0, 1], [2, 2]])
+      game.move_piece([[2, 2], [3, 0]])
+      game.move_piece([[6, 3], [4, 3]])
+      game.move_piece([[6, 4], [5, 4]])
+      game.move_piece([[7, 3], [4, 6]])
+      game.move_piece([[7, 1], [5, 2]])
+    end
+
+    it 'check pawn with no allowed moves' do
+      puts game.board_obj
+      piece = game.board_obj.board[4][3]
+      expect(game.allowed_moves(piece)).to eq([])
+    end    
+
+    it 'check pawn with allowed moves' do
+      piece = game.board_obj.board[5][4]
+      expect(game.allowed_moves(piece)).to eq([[4, 4]])
+    end   
+
+    it 'check queen allowed moves' do
+      piece = game.board_obj.board[4][6]
+      expect(game.allowed_moves(piece)).to eq([[5, 5], [6, 4], [7, 3], [3, 7], [3, 5],
+                                               [2, 4], [1, 3], [0, 2], [4, 7], [4, 5],
+                                               [4, 4], [5, 6], [3, 6], [2, 6]])
+    end
+
+    it 'check knight allowed moves' do
+      piece = game.board_obj.board[5][2]
+      expect(game.allowed_moves(piece)).to eq([[7, 3], [7, 1], [3, 1], [6, 4], [4, 4], [4, 0]])
+    end
+
+  end
 
 
 
