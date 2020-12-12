@@ -1,10 +1,13 @@
 # class with methods to run game
 class Chess
-  attr_reader :board_obj
+  attr_reader :board_obj, :player
 
   def initialize
     @board_obj = Board.new
-    @player_one = Player.new("player_one", "WHITE")
+    @player_one = Player.new("White", "WHITE")
+    @player_two = Player.new("Black", "BLACK")
+
+    @player = @player_one
 
     @white_pieces = []
     @white_pieces << @W_Q = Queen.new('WHITE', [0, 3])
@@ -44,12 +47,12 @@ class Chess
   end
 
   def prompt_for_piece
-    print "#{@name} enter square coords of piece to move: "
+    print "#{@player.name} piece to move: "
     gets.chomp
   end
 
   def prompt_move_square
-    print "#{@name} enter square coords of where to move: "
+    print "#{@player.name} where to move: "
     gets.chomp
   end
 
@@ -60,8 +63,8 @@ class Chess
   end
 
   # MOVE FUNCTION : Calls many others;   NEED TO ADD PLAYER
-  def select_and_move
-    old_position, move_array = select_piece(@player_one)
+  def select_and_move(player)
+    old_position, move_array = select_piece(player)
     new_position = select_position(move_array)
     [old_position, new_position]
   end
@@ -73,6 +76,7 @@ class Chess
     board_obj.board[old_position[0]][old_position[1]] = " "
     piece.position = new_position
     board_obj.board[new_position[0]][new_position[1]] = piece
+    @player = (@player == @player_one) ? @player_two : @player_one
   end
 
   # method to select piece to move; returns piece position & possible moves
@@ -88,12 +92,12 @@ class Chess
 
       piece = @board_obj.board[rank][file]
       move_array = allowed_moves(piece)
-
     end
+    p move_array
     [piece.position, move_array]
   end
 
-  ####  NEXT WORK; CHECK MOVES ON BOARD; MULTI SQUARE MOVES
+  ####  NEXT WORK; add for 2 player
   def allowed_moves(piece)
     move_array = piece.all_moves(piece.position)
     square_onboard_empty(move_array)
@@ -113,6 +117,9 @@ class Chess
   end
 
   def valid_piece?(player, piece)
+    p player
+    p player.colour
+    p piece.colour
     player.colour == piece.colour
   end
 
