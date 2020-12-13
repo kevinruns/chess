@@ -93,22 +93,41 @@ class Chess
       piece = @board_obj.board[rank][file]
       move_array = allowed_moves(piece)
     end
-    p move_array
+#    p move_array
     [piece.position, move_array]
   end
 
-  ####  NEXT WORK; add for 2 player
   def allowed_moves(piece)
     move_array = piece.all_moves(piece.position)
-    square_onboard_empty(move_array)
+    filter_squares(move_array, piece)
   end
 
-  def square_onboard_empty(move_array)
+  ####  NEXT WORK; adding for taking pieces  PAWNS!!!!!!
+  def filter_squares(move_array, piece)
     new_move_array = []
     move_array.each do |direction_array|
       direction_array.select! { |coord| (coord[0].between?(0, 7) && coord[1].between?(0, 7)) }
       direction_array.each do |move_square|
-        break if @board_obj.board[move_square[0]][move_square[1]] != " "
+        square = @board_obj.board[move_square[0]][move_square[1]]
+
+
+        if piece.class == Pawn
+
+          # case for side takes
+          if piece.position[1] != move_square[1]
+            if square != " " 
+              new_move_array << move_square if square.colour != piece.colour
+            end
+            break
+          elsif square != " "
+            break
+          end
+
+        elsif square != " "
+          new_move_array << move_square if square.colour != piece.colour
+          break
+        end
+
 
         new_move_array << move_square
       end
@@ -117,9 +136,6 @@ class Chess
   end
 
   def valid_piece?(player, piece)
-    p player
-    p player.colour
-    p piece.colour
     player.colour == piece.colour
   end
 
