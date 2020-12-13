@@ -47,37 +47,40 @@ describe Chess do
       game.place_pieces
       game.move_piece([[1, 3], [3, 3]])
       game.move_piece([[0, 2], [4, 6]])
-#      puts game.board_obj
     end
 
     it 'check pawn allowed moves' do
+      puts game.board_obj
       piece = game.board_obj.board[3][3]
       expect(game.allowed_moves(piece)).to eq([[4, 3]])
     end
 
     it 'check bishop allowed moves 4 directions' do
       piece = game.board_obj.board[4][6]
-      expect(game.allowed_moves(piece)).to eq([[5, 7], [5, 5], [3, 7], [3, 5], [2, 4], [1, 3], [0, 2]])
+      expect(game.allowed_moves(piece)).to eq([[5, 7], [5, 5], [6, 4], [3, 7], [3, 5], [2, 4], [1, 3], [0, 2]])
     end
 
     it 'check bishop allowed moves 1 direction' do
       game.move_piece([[4, 6], [5, 7]])
+      puts game.board_obj
       piece = game.board_obj.board[5][7]
-      expect(game.allowed_moves(piece)).to eq([[4, 6], [3, 5], [2, 4], [1, 3], [0, 2]])
+      expect(game.allowed_moves(piece)).to eq([[6, 6], [4, 6], [3, 5], [2, 4], [1, 3], [0, 2]])
     end
 
     it 'check queen move all directions' do
       game.move_piece([[0, 3], [2, 3]])
       game.move_piece([[2, 3], [4, 1]])
+      puts game.board_obj
       piece = game.board_obj.board[4][1]
-      expect(game.allowed_moves(piece)).to eq([[5, 2], [5, 0], [3, 2], [2, 3], [3, 0],
+      expect(game.allowed_moves(piece)).to eq([[5, 2], [6, 3], [5, 0], [3, 2], [2, 3], [3, 0],
                                                [4, 2], [4, 3], [4, 4], [4, 5], [4, 0],
-                                               [5, 1], [3, 1], [2, 1]])
+                                               [5, 1], [6, 1], [3, 1], [2, 1]])
     end
 
     it 'check knight move from a4' do
       game.move_piece([[0, 1], [2, 2]])
       game.move_piece([[2, 2], [3, 0]])
+      puts game.board_obj
       piece = game.board_obj.board[3][0]
       expect(game.allowed_moves(piece)).to eq([[5, 1], [4, 2], [2, 2]])
     end
@@ -105,23 +108,36 @@ describe Chess do
       puts game.board_obj
       piece = game.board_obj.board[4][3]
       expect(game.allowed_moves(piece)).to eq([])
-    end    
+    end
 
     it 'check pawn with allowed moves' do
       piece = game.board_obj.board[5][4]
       expect(game.allowed_moves(piece)).to eq([[4, 4]])
-    end   
+    end
 
     it 'check queen allowed moves' do
       piece = game.board_obj.board[4][6]
-      expect(game.allowed_moves(piece)).to eq([[5, 5], [6, 4], [7, 3], [3, 7], [3, 5],
+      expect(game.allowed_moves(piece)).to eq([[5, 7], [5, 5], [6, 4], [7, 3], [3, 7], [3, 5],
                                                [2, 4], [1, 3], [0, 2], [4, 7], [4, 5],
-                                               [4, 4], [5, 6], [3, 6], [2, 6]])
+                                               [4, 4], [5, 6], [3, 6], [2, 6], [1, 6]])
     end
 
     it 'check knight allowed moves' do
       piece = game.board_obj.board[5][2]
-      expect(game.allowed_moves(piece)).to eq([[7, 3], [7, 1], [3, 1], [6, 4], [4, 4], [4, 0]])
+      expect(game.allowed_moves(piece)).to eq([[7, 3], [7, 1], [3, 3], [3, 1], [6, 4], [4, 4], [4, 0]])
+    end
+
+    it 'check white pawn in taking postion' do
+      game.move_piece([[1, 4], [3, 4]])
+      puts game.board_obj
+      piece = game.board_obj.board[3][4]
+      expect(game.allowed_moves(piece)).to eq([[4, 4], [4, 3]])
+    end
+
+    it 'check black pawn in taking postion' do
+      game.move_piece([[1, 4], [3, 4]])
+      piece = game.board_obj.board[4][3]
+      expect(game.allowed_moves(piece)).to eq([[3, 4]])
     end
 
   end
