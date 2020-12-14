@@ -85,9 +85,7 @@ class Chess
   end
 
   def undo_move(undo_position)
-
     piece = board_obj.board[undo_position[0]][undo_position[1]]
-
     if @piece_taken
       board_obj.board[piece.position[0]][piece.position[1]] = @removed_piece
       if @removed_piece.colour == 'WHITE'
@@ -109,23 +107,11 @@ class Chess
   end
 
 
-  # can not move into check, add check_test to prevent infinite loop
-  # can remove move_into_check_test if caller method works
   def allowed_moves(piece)
-
-    # caller_method = caller_locations.first.label
-    # p caller_method
     move_array = piece.all_moves(piece.position)
-#    p "move array: #{move_array}"
-    valid_squares = valid_squares(move_array, piece)
-#    p "valid_squares: #{valid_squares}"
-#    valid_squares = moving_into_check(piece, valid_squares) if caller_method == 'select_piece'
-#    p "valid_squares2: #{valid_squares}"
-
-    valid_squares
+    valid_squares(move_array, piece)
   end
 
-  # MOVE FUNCTION : Calls many others;   NEED TO ADD PLAYER
   def select_and_move(player)
     old_position, move_array = select_piece(player)
     new_position = select_position(move_array)
@@ -150,12 +136,12 @@ class Chess
       @piece_taken = false
     end
 
-#   tidy up below; chanage to new_square
     board_obj.board[new_position[0]][new_position[1]] = piece_to_move
+
   end
 
   def change_player
-    @player = (@player == @white_player) ? @black_player : @white_player
+    @player = @player == @white_player ? @black_player : @white_player
   end
 
   # method to select piece to move; returns piece position & possible moves
@@ -176,8 +162,6 @@ class Chess
     [piece.position, valid_moves_no_check]
   end
 
-
-
   # valid moves, onboard, and not blocked
   def valid_squares(move_array, piece)
     new_move_array = []
@@ -191,7 +175,6 @@ class Chess
         square = @board_obj.board[move_square[0]][move_square[1]]
 
         if piece.instance_of?(Pawn)
-
           # case for pawn side takes
           if piece.position[1] != move_square[1]
             if square != " "
@@ -207,7 +190,6 @@ class Chess
           new_move_array << move_square if square.colour != piece.colour
           break
         end
-
         new_move_array << move_square
       end
     end
@@ -229,10 +211,10 @@ class Chess
 
   def remove_piece(piece)
     p "colour of piece to remove: #{piece.colour}"
-    if (piece.colour == "WHITE")
+    if piece.colour == "WHITE"
       print "Black takes White #{piece.class} \n"
       @white_pieces.delete(piece)
-    elsif (piece.colour == "BLACK")
+    elsif piece.colour == "BLACK"
       print "White takes Black #{piece.class} \n"
       @black_pieces.delete(piece)
     end
@@ -252,7 +234,7 @@ class Chess
 
     test_pieces.each do |piece|
       moves = allowed_moves(piece)
-      if moves && moves.length.positive? && moves.include?(king.position)
+      if moves&.length.positive? && moves.include?(king.position)
 #        p "Can't move into check"
         return true
       end
@@ -261,7 +243,6 @@ class Chess
     return false
 
   end
-
 
   def format_coords(coords)
     coord_array = coords.split('')
@@ -273,64 +254,5 @@ class Chess
 
   def print_board
     @board_obj.print_board
-  end
-
-  # main method for assigning start and target and initiating moves
-  def knight_moves(start, target)
-    return 0 unless check_inputs(start, target)
-
-    @start = start
-    @target = target
-
-    node = Node.new(start, nil)
-    find_path([node])
-  end
-
-  # find path from start to target
-  def find_path(nodes)
-    node_array = []
-
-    nodes.each do |node|
-      moves = move_piece(node.position)
-      parent = node
-      moves.each do |new_position|
-        node = Node.new(new_position, parent)
-        node_array.push(node)
-      end
-    end
-
-    return if node_array.length == 0
-
-    node_array.each do |node|
-      next unless node.position == @target
-
-      print "\nCongratulations! The knight has made it to the target. \n"
-      print_path(node)
-      break
-    end
-
-    find_path(node_array)
-  end
-
-  def print_path(node)
-    str = ""
-    cnt = 0
-    while node.parent
-      str.prepend(node.position.to_s).prepend(" -> ")
-      node = node.parent
-      cnt += 1
-    end
-    str.prepend(node.position.to_s)
-    print "Found in #{cnt} moves: #{str} \n\n"
-  end
-end
-
-# node
-class Node
-  attr_accessor :position, :parent
-
-  def initialize(start = [0, 0], parent)
-    @position = start
-    @parent = parent
   end
 end
