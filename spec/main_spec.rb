@@ -129,7 +129,6 @@ describe Chess do
 
     it 'white pawn in taking postion' do
       game.move_piece([[1, 4], [3, 4]])
-      puts game.board_obj
       piece = game.board_obj.board[3][4]
       expect(game.allowed_moves(piece)).to eq([[4, 4], [4, 3]])
     end
@@ -147,33 +146,63 @@ describe Chess do
       game.place_pieces
     end
 
-    xit 'checking function' do
+    it 'pawn move and undo' do
+      piece = game.board_obj.board[1][3]
+      target = game.board_obj.board[3][3]
       game.move_piece([[1, 3], [3, 3]])
-      game.undo_move
-      puts game.board_obj
+      game.undo_move([3, 3])
+      expect(game.allowed_moves(piece)).to eq([[2, 3], [3, 3]])
+      expect(game.board_obj.board[3][3]).to eq(target)
     end
+
+    it 'take piece and undo' do
+      game.move_piece([[1, 3], [3, 3]])
+      game.move_piece([[6, 3], [5, 3]])
+      game.move_piece([[0, 2], [4, 6]])
+      piece = game.board_obj.board[4][6]
+      target = game.board_obj.board[6][4]
+      game.move_piece([[4, 6], [6, 4]])
+      game.undo_move([6, 4])
+      expect(game.allowed_moves(piece)).to eq([[5, 7], [5, 5], [6, 4], [3, 7],
+                                               [3, 5], [2, 4], [1, 3], [0, 2]])
+      expect(game.board_obj.board[6][4]).to eq(target)
+    end
+
   end
 
 
-  context 'testing for check' do
+  context 'can not move into check' do
     board_start = []
+
+
     before do
       game.place_pieces
-      game.move_piece([[1, 3], [3, 3]])
-      game.move_piece([[0, 2], [4, 6]])
-      game.move_piece([[4, 6], [5, 7]])
-      game.move_piece([[0, 3], [2, 3]])
-      game.move_piece([[2, 3], [4, 1]])
-      game.move_piece([[0, 1], [2, 2]])
-      game.move_piece([[2, 2], [3, 0]])
-      game.move_piece([[6, 3], [4, 3]])
-      game.move_piece([[6, 4], [5, 4]])
-      game.move_piece([[7, 3], [4, 6]])
-      game.move_piece([[7, 1], [5, 2]])
-      game.move_piece([[4, 1], [5, 2]])
     end
 
-    xit 'checking function' do
+    it 'checking pawn blocking queen' do
+      game.move_piece([[1, 4], [3, 4]])
+      game.move_piece([[6, 4], [4, 4]])
+      game.move_piece([[0, 3], [4, 7]])
+      piece = game.board_obj.board[6][5]
+      valid_moves = game.allowed_moves(piece)
+      expect(game.moving_into_check(piece, valid_moves)).to eq([])
+      puts game.board_obj
+    end
+
+
+    it 'checking pawn blocking queen' do
+      game.move_piece([[1, 4], [3, 4]])
+      game.move_piece([[6, 4], [4, 4]])
+      game.move_piece([[0, 3], [4, 7]])
+      game.move_piece([[6, 3], [5, 3]])
+      game.move_piece([[0, 4], [1, 4]])
+      game.move_piece([[0, 6], [2, 5]])
+      game.move_piece([[7, 2], [3, 6]])
+
+      piece = game.board_obj.board[2][5]
+      valid_moves = game.allowed_moves(piece)
+      expect(game.moving_into_check(piece, valid_moves)).to eq([])
+
       puts game.board_obj
     end
   end
