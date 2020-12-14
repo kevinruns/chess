@@ -41,7 +41,7 @@ describe Chess do
     end
   end
 
-  context 'move pieces, white only' do
+  context 'move pieces, white only:' do
     board_start = []
     before do
       game.place_pieces
@@ -49,25 +49,25 @@ describe Chess do
       game.move_piece([[0, 2], [4, 6]])
     end
 
-    it 'check pawn allowed moves' do
+    it 'pawn allowed moves' do
       puts game.board_obj
       piece = game.board_obj.board[3][3]
       expect(game.allowed_moves(piece)).to eq([[4, 3]])
     end
 
-    it 'check bishop allowed moves 4 directions' do
+    it 'bishop allowed moves 4 directions' do
       piece = game.board_obj.board[4][6]
       expect(game.allowed_moves(piece)).to eq([[5, 7], [5, 5], [6, 4], [3, 7], [3, 5], [2, 4], [1, 3], [0, 2]])
     end
 
-    it 'check bishop allowed moves 1 direction' do
+    it 'bishop allowed moves 1 direction' do
       game.move_piece([[4, 6], [5, 7]])
       puts game.board_obj
       piece = game.board_obj.board[5][7]
       expect(game.allowed_moves(piece)).to eq([[6, 6], [4, 6], [3, 5], [2, 4], [1, 3], [0, 2]])
     end
 
-    it 'check queen move all directions' do
+    it 'queen move all directions' do
       game.move_piece([[0, 3], [2, 3]])
       game.move_piece([[2, 3], [4, 1]])
       puts game.board_obj
@@ -77,7 +77,7 @@ describe Chess do
                                                [5, 1], [6, 1], [3, 1], [2, 1]])
     end
 
-    it 'check knight move from a4' do
+    it 'knight move from a4' do
       game.move_piece([[0, 1], [2, 2]])
       game.move_piece([[2, 2], [3, 0]])
       puts game.board_obj
@@ -104,71 +104,78 @@ describe Chess do
       game.move_piece([[7, 1], [5, 2]])
     end
 
-    it 'check pawn with no allowed moves' do
+    it 'pawn with no allowed moves' do
       puts game.board_obj
       piece = game.board_obj.board[4][3]
       expect(game.allowed_moves(piece)).to eq([])
     end
 
-    it 'check pawn with allowed moves' do
+    it 'pawn with allowed moves' do
       piece = game.board_obj.board[5][4]
       expect(game.allowed_moves(piece)).to eq([[4, 4]])
     end
 
-    it 'check queen allowed moves' do
+    it 'queen allowed moves' do
       piece = game.board_obj.board[4][6]
       expect(game.allowed_moves(piece)).to eq([[5, 7], [5, 5], [6, 4], [7, 3], [3, 7], [3, 5],
                                                [2, 4], [1, 3], [0, 2], [4, 7], [4, 5],
                                                [4, 4], [5, 6], [3, 6], [2, 6], [1, 6]])
     end
 
-    it 'check knight allowed moves' do
+    it 'knight allowed moves' do
       piece = game.board_obj.board[5][2]
       expect(game.allowed_moves(piece)).to eq([[7, 3], [7, 1], [3, 3], [3, 1], [6, 4], [4, 4], [4, 0]])
     end
 
-    it 'check white pawn in taking postion' do
+    it 'white pawn in taking postion' do
       game.move_piece([[1, 4], [3, 4]])
       puts game.board_obj
       piece = game.board_obj.board[3][4]
       expect(game.allowed_moves(piece)).to eq([[4, 4], [4, 3]])
     end
 
-    it 'check black pawn in taking postion' do
+    it 'black pawn in taking postion' do
       game.move_piece([[1, 4], [3, 4]])
       piece = game.board_obj.board[4][3]
       expect(game.allowed_moves(piece)).to eq([[3, 4]])
     end
+  end
 
+  context 'test undo' do
+    board_start = []
+    before do
+      game.place_pieces
+    end
+
+    xit 'checking function' do
+      game.move_piece([[1, 3], [3, 3]])
+      game.undo_move
+      puts game.board_obj
+    end
   end
 
 
+  context 'testing for check' do
+    board_start = []
+    before do
+      game.place_pieces
+      game.move_piece([[1, 3], [3, 3]])
+      game.move_piece([[0, 2], [4, 6]])
+      game.move_piece([[4, 6], [5, 7]])
+      game.move_piece([[0, 3], [2, 3]])
+      game.move_piece([[2, 3], [4, 1]])
+      game.move_piece([[0, 1], [2, 2]])
+      game.move_piece([[2, 2], [3, 0]])
+      game.move_piece([[6, 3], [4, 3]])
+      game.move_piece([[6, 4], [5, 4]])
+      game.move_piece([[7, 3], [4, 6]])
+      game.move_piece([[7, 1], [5, 2]])
+      game.move_piece([[4, 1], [5, 2]])
+    end
 
+    xit 'checking function' do
+      puts game.board_obj
+    end
+  end
 
-
-
-
-
-  # describe '#placing pieces' do
-  #   context 'write red to column 1' do
-  #     before do
-  #       allow(player_one).to receive(:prompt_player).and_return(nil)
-  #       allow(player_one).to receive(:select_column).and_return(1)
-  #       allow(player_two).to receive(:prompt_player).and_return(nil)
-  #       allow(player_two).to receive(:select_column).and_return(1)
-  #     end
-
-  #     it '1 red to column 1' do
-  #       red_in_col_1x1 = [[blank, blank, blank, blank, blank, blank, blank],
-  #                         [blank, blank, blank, blank, blank, blank, blank],
-  #                         [blank, blank, blank, blank, blank, blank, blank],
-  #                         [blank, blank, blank, blank, blank, blank, blank],
-  #                         [blank, blank, blank, blank, blank, blank, blank],
-  #                         [red, blank, blank, blank, blank, blank, blank]]
-
-  #       game_board.write_column(player_one)
-  #       expect(game_board.board).to eq(red_in_col_1x1)
-  #     end
-  #   end
-  # end
 end

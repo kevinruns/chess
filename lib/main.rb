@@ -25,7 +25,9 @@ puts game.board_obj
 
 
 while true
-  game.move_piece(game.select_and_move)
+  game.move_piece(game.select_and_move(game.player))
+  game.change_player
+ # system 'clear'
   puts game.board_obj
 end
 

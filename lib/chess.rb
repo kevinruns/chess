@@ -1,13 +1,13 @@
 # class with methods to run game
 class Chess
-  attr_reader :board_obj, :player
+  attr_reader :board_obj, :player, :white_pieces, :black_pieces, :W_K, :B_K
 
   def initialize
     @board_obj = Board.new
-    @player_one = Player.new("White", "WHITE")
-    @player_two = Player.new("Black", "BLACK")
+    @white_player = Player.new("White", "WHITE")
+    @black_player = Player.new("Black", "BLACK")
 
-    @player = @player_one
+    @player = @white_player
 
     @white_pieces = []
     @white_pieces << @W_Q = Queen.new('WHITE', [0, 3])
@@ -44,6 +44,9 @@ class Chess
     @black_pieces << @B_P6 = Pawn.new('BLACK', [6, 5])
     @black_pieces << @B_P7 = Pawn.new('BLACK', [6, 6])
     @black_pieces << @B_P8 = Pawn.new('BLACK', [6, 7])
+
+    @piece_taken = false
+    @removed_piece = ""
   end
 
   def prompt_for_piece
@@ -62,6 +65,66 @@ class Chess
     end
   end
 
+  # after move by playerA, check every piece of playerB to see if playerA in check
+  def moving_into_check(piece, valid_squares)
+
+    valid_not_in_check = []
+    old_position = piece.position
+
+    # for each possible move, try it and test if in check, if so need to delete
+    p "valid squares: #{valid_squares}"
+    valid_squares.each do |test_position|
+      move_piece([old_position, test_position])
+      if check_for_check(piece.colour)
+        valid_not_in_check.delete(test_position)
+      else
+        valid_not_in_check << test_position
+      end
+      undo_move(test_position)
+    end
+    valid_not_in_check
+  end
+
+  def undo_move(undo_position)
+
+    piece = board_obj.board[undo_position[0]][undo_position[1]]
+
+    if @piece_taken
+      board_obj.board[piece.position[0]][piece.position[1]] = @removed_piece
+      if @removed_piece.colour == 'WHITE'
+        @white_pieces << @removed_piece
+      elsif @removed_piece.colour == 'BLACK'
+        @black_pieces << @removed_piece
+      else
+        puts "ERROR"
+      end
+    else
+      board_obj.board[piece.position[0]][piece.position[1]] = " "
+    end
+
+    # revert piece position
+    piece.last_position
+    # update board
+    board_obj.board[piece.position[0]][piece.position[1]] = piece
+
+  end
+
+
+  # can not move into check, add check_test to prevent infinite loop
+  # can remove move_into_check_test if caller method works
+  def allowed_moves(piece)
+
+    caller_method = caller_locations.first.label
+    move_array = piece.all_moves(piece.position)
+#    p "move array: #{move_array}"
+    valid_squares = valid_squares(move_array, piece)
+#    p "valid_squares: #{valid_squares}"
+    valid_squares = moving_into_check(piece, valid_squares) if caller_method == 'select_piece'
+#    p "valid_squares2: #{valid_squares}"
+
+    valid_squares
+  end
+
   # MOVE FUNCTION : Calls many others;   NEED TO ADD PLAYER
   def select_and_move(player)
     old_position, move_array = select_piece(player)
@@ -69,14 +132,30 @@ class Chess
     [old_position, new_position]
   end
 
+  # position array = [old_position, new_position] from select_and_move
   def move_piece( position_array )
+
     old_position = position_array[0]
-    new_position = position_array[1]
-    piece = board_obj.board[old_position[0]][old_position[1]]
+    piece_to_move = board_obj.board[old_position[0]][old_position[1]]
     board_obj.board[old_position[0]][old_position[1]] = " "
-    piece.position = new_position
-    board_obj.board[new_position[0]][new_position[1]] = piece
-    @player = (@player == @player_one) ? @player_two : @player_one
+
+    new_position = position_array[1]
+    piece_to_move.new_position(new_position)
+    new_square = board_obj.board[new_position[0]][new_position[1]]
+
+    if new_square != " "
+      remove_piece(new_square)
+      @piece_taken = true
+    else
+      @piece_taken = false
+    end
+
+#   tidy up below; chanage to new_square
+    board_obj.board[new_position[0]][new_position[1]] = piece_to_move
+  end
+
+  def change_player
+    @player = (@player == @white_player) ? @black_player : @white_player
   end
 
   # method to select piece to move; returns piece position & possible moves
@@ -93,32 +172,32 @@ class Chess
       piece = @board_obj.board[rank][file]
       move_array = allowed_moves(piece)
     end
-#    p move_array
     [piece.position, move_array]
   end
 
-  def allowed_moves(piece)
-    move_array = piece.all_moves(piece.position)
-    filter_squares(move_array, piece)
-  end
 
-  ####  NEXT WORK; adding for taking pieces  PAWNS!!!!!!
-  def filter_squares(move_array, piece)
+
+  # valid moves, onboard, and not blocked
+  def valid_squares(move_array, piece)
     new_move_array = []
     move_array.each do |direction_array|
+
+      # check coords on board
       direction_array.select! { |coord| (coord[0].between?(0, 7) && coord[1].between?(0, 7)) }
+
+      # valid moves blocked by pieces and add valid attack squares
       direction_array.each do |move_square|
         square = @board_obj.board[move_square[0]][move_square[1]]
 
+        if piece.instance_of?(Pawn)
 
-        if piece.class == Pawn
-
-          # case for side takes
+          # case for pawn side takes
           if piece.position[1] != move_square[1]
-            if square != " " 
+            if square != " "
               new_move_array << move_square if square.colour != piece.colour
             end
             break
+          # case if piece in way
           elsif square != " "
             break
           end
@@ -127,7 +206,6 @@ class Chess
           new_move_array << move_square if square.colour != piece.colour
           break
         end
-
 
         new_move_array << move_square
       end
@@ -147,6 +225,44 @@ class Chess
     end
     position
   end
+
+  def remove_piece(piece)
+    p "colour of piece to remove: #{piece.colour}"
+    if (piece.colour == "WHITE")
+      print "Black takes White #{piece.class} \n"
+      @white_pieces.delete(piece)
+    elsif (piece.colour == "BLACK")
+      print "White takes Black #{piece.class} \n"
+      @black_pieces.delete(piece)
+    end
+    @removed_piece = piece
+  end
+
+  def check_for_check(colour)
+    king = ""
+    test_pieces = []
+    if colour == "WHITE"
+      king = @W_K
+      test_pieces = @black_pieces
+    elsif colour == "BLACK"
+      king = @B_K
+      test_pieces = @white_pieces
+    end
+
+    test_pieces.each do |piece|
+      moves = allowed_moves(piece)
+      # p "#{piece.colour}  #{piece.class}"
+      # p moves
+      if moves && moves.length.positive? && moves.include?(king.position)
+        p "Can't move into check"
+        return true
+      end
+    end
+
+    return false
+
+  end
+
 
   def format_coords(coords)
     coord_array = coords.split('')
