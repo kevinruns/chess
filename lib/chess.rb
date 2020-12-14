@@ -66,14 +66,13 @@ class Chess
   end
 
   # after move by playerA, check every piece of playerB to see if playerA in check
-  def moving_into_check(piece, valid_squares)
+  def moving_into_check(piece, valid_moves)
 
     valid_not_in_check = []
     old_position = piece.position
 
     # for each possible move, try it and test if in check, if so need to delete
-    p "valid squares: #{valid_squares}"
-    valid_squares.each do |test_position|
+    valid_moves.each do |test_position|
       move_piece([old_position, test_position])
       if check_for_check(piece.colour)
         valid_not_in_check.delete(test_position)
@@ -114,12 +113,13 @@ class Chess
   # can remove move_into_check_test if caller method works
   def allowed_moves(piece)
 
-    caller_method = caller_locations.first.label
+    # caller_method = caller_locations.first.label
+    # p caller_method
     move_array = piece.all_moves(piece.position)
 #    p "move array: #{move_array}"
     valid_squares = valid_squares(move_array, piece)
 #    p "valid_squares: #{valid_squares}"
-    valid_squares = moving_into_check(piece, valid_squares) if caller_method == 'select_piece'
+#    valid_squares = moving_into_check(piece, valid_squares) if caller_method == 'select_piece'
 #    p "valid_squares2: #{valid_squares}"
 
     valid_squares
@@ -170,9 +170,10 @@ class Chess
       next unless rank.between?(0, 7) && file.between?(0, 7) && @board_obj.board[rank][file] != " "
 
       piece = @board_obj.board[rank][file]
-      move_array = allowed_moves(piece)
+      valid_moves = allowed_moves(piece)
+      valid_moves_no_check = moving_into_check(piece, valid_moves)
     end
-    [piece.position, move_array]
+    [piece.position, valid_moves_no_check]
   end
 
 
@@ -251,10 +252,8 @@ class Chess
 
     test_pieces.each do |piece|
       moves = allowed_moves(piece)
-      # p "#{piece.colour}  #{piece.class}"
-      # p moves
       if moves && moves.length.positive? && moves.include?(king.position)
-        p "Can't move into check"
+#        p "Can't move into check"
         return true
       end
     end
