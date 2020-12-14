@@ -42,7 +42,6 @@ describe Chess do
   end
 
   context 'move pieces, white only:' do
-    board_start = []
     before do
       game.place_pieces
       game.move_piece([[1, 3], [3, 3]])
@@ -50,7 +49,6 @@ describe Chess do
     end
 
     it 'pawn allowed moves' do
-      puts game.board_obj
       piece = game.board_obj.board[3][3]
       expect(game.allowed_moves(piece)).to eq([[4, 3]])
     end
@@ -62,7 +60,6 @@ describe Chess do
 
     it 'bishop allowed moves 1 direction' do
       game.move_piece([[4, 6], [5, 7]])
-      puts game.board_obj
       piece = game.board_obj.board[5][7]
       expect(game.allowed_moves(piece)).to eq([[6, 6], [4, 6], [3, 5], [2, 4], [1, 3], [0, 2]])
     end
@@ -70,7 +67,6 @@ describe Chess do
     it 'queen move all directions' do
       game.move_piece([[0, 3], [2, 3]])
       game.move_piece([[2, 3], [4, 1]])
-      puts game.board_obj
       piece = game.board_obj.board[4][1]
       expect(game.allowed_moves(piece)).to eq([[5, 2], [6, 3], [5, 0], [3, 2], [2, 3], [3, 0],
                                                [4, 2], [4, 3], [4, 4], [4, 5], [4, 0],
@@ -80,7 +76,6 @@ describe Chess do
     it 'knight move from a4' do
       game.move_piece([[0, 1], [2, 2]])
       game.move_piece([[2, 2], [3, 0]])
-      puts game.board_obj
       piece = game.board_obj.board[3][0]
       expect(game.allowed_moves(piece)).to eq([[5, 1], [4, 2], [2, 2]])
     end
@@ -88,7 +83,7 @@ describe Chess do
 
 
   context 'move pieces, black and white' do
-    board_start = []
+
     before do
       game.place_pieces
       game.move_piece([[1, 3], [3, 3]])
@@ -105,7 +100,6 @@ describe Chess do
     end
 
     it 'pawn with no allowed moves' do
-      puts game.board_obj
       piece = game.board_obj.board[4][3]
       expect(game.allowed_moves(piece)).to eq([])
     end
@@ -141,7 +135,6 @@ describe Chess do
   end
 
   context 'test undo' do
-    board_start = []
     before do
       game.place_pieces
     end
@@ -172,9 +165,6 @@ describe Chess do
 
 
   context 'can not move into check' do
-    board_start = []
-
-
     before do
       game.place_pieces
     end
@@ -186,7 +176,6 @@ describe Chess do
       piece = game.board_obj.board[6][5]
       valid_moves = game.allowed_moves(piece)
       expect(game.moving_into_check(piece, valid_moves)).to eq([])
-      puts game.board_obj
     end
 
 
@@ -202,8 +191,6 @@ describe Chess do
       piece = game.board_obj.board[2][5]
       valid_moves = game.allowed_moves(piece)
       expect(game.moving_into_check(piece, valid_moves)).to eq([])
-
-      puts game.board_obj
     end
   end
 
