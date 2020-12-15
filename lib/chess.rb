@@ -71,19 +71,30 @@ class Chess
     valid_not_in_check = []
     old_position = piece.position
 
-    king = piece.colour == 'BLACK' ? @B_K : @W_K
-
     # for each possible move, try it and test if in check, if so need to delete
     valid_moves.each do |test_position|
       move_piece([old_position, test_position])
-      if check_moved_into_check(@player)
+      change_player
+      if opponent_in_check(player.colour)
         valid_not_in_check.delete(test_position)
+        undo_opponent_check(player.colour)
       else
         valid_not_in_check << test_position
       end
+      change_player
       undo_move(test_position)
     end
     valid_not_in_check
+  end
+
+  def undo_opponent_check(attack_colour)
+    if attack_colour == "WHITE"
+      @B_K.out_of_check
+    elsif attack_colour == "BLACK"
+      @W_K.out_of_check
+    else
+      puts "ERROR"
+    end
   end
 
   def undo_move(undo_position)
@@ -217,6 +228,7 @@ class Chess
     @removed_piece = piece
   end
 
+  # method to test if opponent is in check
   def opponent_in_check(attacking_colour)
 
     attack_pieces = []
@@ -233,29 +245,7 @@ class Chess
     attack_pieces.each do |piece|
       moves = allowed_moves(piece)
       if moves&.length.positive? && moves.include?(king_under_attack.position)
-        puts "CHECK"
         king_under_attack.now_in_check
-        return true
-      end
-    end
-    return false
-  end
-
-  def check_moved_into_check(player)
-    test_pieces = []
-    if player.colour == "WHITE"
-      king = @W_K
-      test_pieces = @black_pieces
-    elsif player.colour == "BLACK"
-      king = @B_K
-      test_pieces = @white_pieces
-    else
-      print "ERROR"
-    end
-
-    test_pieces.each do |piece|
-      moves = allowed_moves(piece)
-      if moves&.length.positive? && moves.include?(king.position)
         return true
       end
     end
