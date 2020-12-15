@@ -217,7 +217,8 @@ class Chess
     @removed_piece = piece
   end
 
-  def check_if_check(player)
+  def check_if_in_check(player)
+    
     attack_pieces = []
     if player.colour == "BLACK"
       king_under_attack = @W_K
