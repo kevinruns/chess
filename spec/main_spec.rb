@@ -206,7 +206,7 @@ describe Chess do
       game.move_piece([[6, 5], [5, 5]])
       game.move_piece([[0, 3], [4, 7]])
       game.white_player
-      game.check_if_in_check(game.player)
+      game.opponent_in_check(game.player)
       expect(game.B_K.in_check).to eq(true)
     end
 
@@ -223,7 +223,7 @@ describe Chess do
 
       game.black_player
 
-      game.check_if_in_check(game.player)
+      game.opponent_in_check(game.player)
       expect(game.W_K.in_check).to eq(true)
     end
 
@@ -245,7 +245,7 @@ describe Chess do
       puts game.board_obj
       game.black_player
 
-      game.check_if_in_check(game.player)
+      game.opponent_in_check(game.player)
       expect(game.W_K.in_check).to eq(false)
     end
 
