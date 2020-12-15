@@ -208,5 +208,46 @@ describe Chess do
       game.check_if_check([4, 7])
       expect(game.B_K.in_check).to eq(true)
     end
+
+    it 'black to get out of check then check white' do
+      game.move_piece([[1, 4], [3, 4]])
+      game.move_piece([[6, 5], [5, 5]])
+      game.move_piece([[0, 3], [4, 7]])
+
+      game.move_piece([[6, 6], [5, 6]])
+      game.move_piece([[0, 4], [1, 4]])
+
+      game.move_piece([[7, 1], [5, 2]])
+      game.move_piece([[1, 2], [2, 2]])
+
+      game.move_piece([[5, 2], [3, 3]])
+
+      puts game.board_obj
+      game.check_if_check([3, 3])
+      expect(game.W_K.in_check).to eq(true)
+    end
+
+
+    it 'white gets out of check by taking black' do
+      game.move_piece([[1, 4], [3, 4]])
+      game.move_piece([[6, 5], [5, 5]])
+      game.move_piece([[0, 3], [4, 7]])
+
+      game.move_piece([[6, 6], [5, 6]])
+      game.move_piece([[0, 4], [1, 4]])
+
+      game.move_piece([[7, 1], [5, 2]])
+      game.move_piece([[1, 2], [2, 2]])
+
+      game.move_piece([[5, 2], [3, 3]])
+      game.move_piece([[2, 2], [3, 3]])
+
+      puts game.board_obj
+      game.check_if_check([3, 3])
+      expect(game.W_K.in_check).to eq(false)
+    end
+
+
+
   end
 end
