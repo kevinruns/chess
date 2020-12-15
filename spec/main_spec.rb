@@ -169,17 +169,18 @@ describe Chess do
       game.place_pieces
     end
 
-    it 'checking pawn blocking queen' do
+    it 'pawn blocking queen attacking black king' do
       game.move_piece([[1, 4], [3, 4]])
       game.move_piece([[6, 4], [4, 4]])
       game.move_piece([[0, 3], [4, 7]])
+      game.black_player
       piece = game.board_obj.board[6][5]
       valid_moves = game.allowed_moves(piece)
       expect(game.moving_into_check(piece, valid_moves)).to eq([])
     end
 
 
-    it 'checking pawn blocking queen' do
+    it 'knight blocking queen attacking white king' do
       game.move_piece([[1, 4], [3, 4]])
       game.move_piece([[6, 4], [4, 4]])
       game.move_piece([[0, 3], [4, 7]])
@@ -187,7 +188,7 @@ describe Chess do
       game.move_piece([[0, 4], [1, 4]])
       game.move_piece([[0, 6], [2, 5]])
       game.move_piece([[7, 2], [3, 6]])
-
+      game.white_player
       piece = game.board_obj.board[2][5]
       valid_moves = game.allowed_moves(piece)
       expect(game.moving_into_check(piece, valid_moves)).to eq([])
@@ -204,8 +205,8 @@ describe Chess do
       game.move_piece([[1, 4], [3, 4]])
       game.move_piece([[6, 5], [5, 5]])
       game.move_piece([[0, 3], [4, 7]])
-      puts game.board_obj
-      game.check_if_check([4, 7])
+      game.white_player
+      game.check_if_check(game.player)
       expect(game.B_K.in_check).to eq(true)
     end
 
@@ -216,14 +217,13 @@ describe Chess do
 
       game.move_piece([[6, 6], [5, 6]])
       game.move_piece([[0, 4], [1, 4]])
-
       game.move_piece([[7, 1], [5, 2]])
       game.move_piece([[1, 2], [2, 2]])
-
       game.move_piece([[5, 2], [3, 3]])
 
-      puts game.board_obj
-      game.check_if_check([3, 3])
+      game.black_player
+
+      game.check_if_check(game.player)
       expect(game.W_K.in_check).to eq(true)
     end
 
@@ -243,7 +243,9 @@ describe Chess do
       game.move_piece([[2, 2], [3, 3]])
 
       puts game.board_obj
-      game.check_if_check([3, 3])
+      game.black_player
+
+      game.check_if_check(game.player)
       expect(game.W_K.in_check).to eq(false)
     end
 

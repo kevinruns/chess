@@ -71,10 +71,12 @@ class Chess
     valid_not_in_check = []
     old_position = piece.position
 
+    king = piece.colour == 'BLACK' ? @B_K : @W_K
+
     # for each possible move, try it and test if in check, if so need to delete
     valid_moves.each do |test_position|
       move_piece([old_position, test_position])
-      if check_moved_into_check(piece.colour)
+      if check_moved_into_check(@player)
         valid_not_in_check.delete(test_position)
       else
         valid_not_in_check << test_position
@@ -137,10 +139,6 @@ class Chess
 
     board_obj.board[new_position[0]][new_position[1]] = piece_to_move
 
-  end
-
-  def change_player
-    @player = @player == @white_player ? @black_player : @white_player
   end
 
   # method to select piece to move; returns piece position & possible moves
@@ -219,30 +217,39 @@ class Chess
     @removed_piece = piece
   end
 
-  def check_if_check(attacking_position)
-    piece_attacking = board_obj.board[attacking_position[0]][attacking_position[1]]
-    if piece_attacking.colour == "WHITE"
-      king_under_attack = @B_K
-    elsif piece_attacking.colour == "BLACK"
+  def check_if_check(player)
+    attack_pieces = []
+    if player.colour == "BLACK"
       king_under_attack = @W_K
-    end 
-    moves = allowed_moves(piece_attacking)
-    if moves&.length.positive? && moves.include?(king_under_attack.position)
-      puts "CHECK"
-      king_under_attack.now_in_check
-      return true
+      attack_pieces = @black_pieces
+    elsif player.colour == "WHITE"
+      king_under_attack = @B_K
+      attack_pieces = @white_pieces
+    else
+      print "ERROR"
     end
+
+    attack_pieces.each do |piece|
+      moves = allowed_moves(piece)
+      if moves&.length.positive? && moves.include?(king_under_attack.position)
+        puts "CHECK"
+        king_under_attack.now_in_check
+        return true
+      end
+    end
+    return false
   end
 
-  def check_moved_into_check(colour)
-    king = ""
+  def check_moved_into_check(player)
     test_pieces = []
-    if colour == "WHITE"
+    if player.colour == "WHITE"
       king = @W_K
       test_pieces = @black_pieces
-    elsif colour == "BLACK"
+    elsif player.colour == "BLACK"
       king = @B_K
       test_pieces = @white_pieces
+    else
+      print "ERROR"
     end
 
     test_pieces.each do |piece|
@@ -265,4 +272,17 @@ class Chess
   def print_board
     @board_obj.print_board
   end
+
+  def change_player
+    @player = @player == @white_player ? @black_player : @white_player
+  end
+
+  def white_player
+    @player = @white_player
+  end
+
+  def black_player
+    @player = @black_player
+  end
+
 end
