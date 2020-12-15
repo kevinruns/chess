@@ -194,4 +194,19 @@ describe Chess do
     end
   end
 
+
+  context 'test for check' do
+    before do
+      game.place_pieces
+    end
+
+    it 'white queen move to check' do
+      game.move_piece([[1, 4], [3, 4]])
+      game.move_piece([[6, 5], [5, 5]])
+      game.move_piece([[0, 3], [4, 7]])
+      puts game.board_obj
+      game.check_if_check([4, 7])
+      expect(game.B_K.in_check).to eq(true)
+    end
+  end
 end
