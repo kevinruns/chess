@@ -1,11 +1,12 @@
 
 # king
 class King < Piece
-  attr_accessor :code
+  attr_accessor :code, :in_check
 
   def initialize(colour, position)
     super(colour, position)
     @code = ChessConstants::PIECE_CODES.dig(:KING, colour.to_sym)
+    @in_check = false
   end
 
   def all_moves(position = @position)
@@ -20,4 +21,13 @@ class King < Piece
     moves[7] = [[position[0] - 1, position[1] - 1]]
     moves
   end
+
+  def now_in_check
+    @in_check = true
+  end
+
+  def out_of_check
+    @in_check = false
+  end
+
 end

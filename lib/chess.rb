@@ -74,7 +74,7 @@ class Chess
     # for each possible move, try it and test if in check, if so need to delete
     valid_moves.each do |test_position|
       move_piece([old_position, test_position])
-      if check_for_check(piece.colour)
+      if check_moved_into_check(piece.colour)
         valid_not_in_check.delete(test_position)
       else
         valid_not_in_check << test_position
@@ -103,7 +103,6 @@ class Chess
     piece.last_position
     # update board
     board_obj.board[piece.position[0]][piece.position[1]] = piece
-
   end
 
 
@@ -147,8 +146,8 @@ class Chess
   # method to select piece to move; returns piece position & possible moves
   def select_piece(player)
     piece = ""
-    move_array = []
-    until defined?(piece.colour) && valid_piece?(player, piece) && move_array.length.positive?
+    valid_moves_no_check = []
+    until defined?(piece.colour) && valid_piece?(player, piece) && valid_moves_no_check.length.positive?
       piece_input = prompt_for_piece
       piece_pos = format_coords(piece_input)
       rank = piece_pos[0]
@@ -210,18 +209,32 @@ class Chess
   end
 
   def remove_piece(piece)
-    p "colour of piece to remove: #{piece.colour}"
     if piece.colour == "WHITE"
-      print "Black takes White #{piece.class} \n"
+#      print "Black takes White #{piece.class} \n"
       @white_pieces.delete(piece)
     elsif piece.colour == "BLACK"
-      print "White takes Black #{piece.class} \n"
+#      print "White takes Black #{piece.class} \n"
       @black_pieces.delete(piece)
     end
     @removed_piece = piece
   end
 
-  def check_for_check(colour)
+  def check_if_check(attacking_position)
+    piece_attacking = board_obj.board[attacking_position[0]][attacking_position[1]]
+    if piece_attacking.colour == "WHITE"
+      king_under_attack = @B_K
+    elsif piece_attacking.colour == "BLACK"
+      king_under_attack = @W_K
+    end 
+    moves = allowed_moves(piece_attacking)
+    if moves&.length.positive? && moves.include?(king_under_attack.position)
+      puts "CHECK"
+      king_under_attack.now_in_check
+      return true
+    end
+  end
+
+  def check_moved_into_check(colour)
     king = ""
     test_pieces = []
     if colour == "WHITE"
@@ -235,13 +248,10 @@ class Chess
     test_pieces.each do |piece|
       moves = allowed_moves(piece)
       if moves&.length.positive? && moves.include?(king.position)
-#        p "Can't move into check"
         return true
       end
     end
-
     return false
-
   end
 
   def format_coords(coords)

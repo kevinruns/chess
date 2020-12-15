@@ -25,7 +25,9 @@ puts game.board_obj
 
 
 while true
-  game.move_piece(game.select_and_move(game.player))
+  position_array = game.select_and_move(game.player)
+  game.move_piece(position_array)
+  game.check_if_check(position_array[1])
   game.change_player
  # system 'clear'
   puts game.board_obj
