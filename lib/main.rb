@@ -26,11 +26,7 @@ puts game.board_obj
 
 while true
   position_array = game.select_and_move(game.player)
-  game.move_piece(position_array)
-  # game.check_if_check(position_array[1])
-  game.opponent_in_check(game.player.colour)
-  game.change_player
-  # system 'clear'
+  game.move_check_change(position_array)
   puts game.board_obj
 end
 

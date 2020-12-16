@@ -202,47 +202,37 @@ describe Chess do
     end
 
     it 'white queen move to check' do
-      game.move_piece([[1, 4], [3, 4]])
-      game.move_piece([[6, 5], [5, 5]])
-      game.move_piece([[0, 3], [4, 7]])
-      game.white_player
-      game.opponent_in_check(game.player.colour)
+      game.move_check_change([[1, 4], [3, 4]])
+      game.move_check_change([[6, 5], [5, 5]])
+      game.move_check_change([[0, 3], [4, 7]])
       expect(game.B_K.in_check).to eq(true)
     end
 
     it 'black to get out of check then check white' do
-      game.move_piece([[1, 4], [3, 4]])
-      game.move_piece([[6, 5], [5, 5]])
-      game.move_piece([[0, 3], [4, 7]])
+      game.move_check_change([[1, 4], [3, 4]])
+      game.move_check_change([[6, 5], [5, 5]])
+      game.move_check_change([[0, 3], [4, 7]])
+      game.move_check_change([[6, 6], [5, 6]])
+      game.move_check_change([[0, 4], [1, 4]])
+      game.move_check_change([[7, 1], [5, 2]])
+      game.move_check_change([[1, 2], [2, 2]])
+      game.move_check_change([[5, 2], [3, 3]])
 
-      game.move_piece([[6, 6], [5, 6]])
-      game.move_piece([[0, 4], [1, 4]])
-      game.move_piece([[7, 1], [5, 2]])
-      game.move_piece([[1, 2], [2, 2]])
-      game.move_piece([[5, 2], [3, 3]])
-
-      game.black_player
-
-      game.opponent_in_check(game.player.colour)
       expect(game.W_K.in_check).to eq(true)
     end
 
 
     it 'white gets out of check by taking black' do
-      game.move_piece([[1, 4], [3, 4]])
-      game.move_piece([[6, 5], [5, 5]])
-      game.move_piece([[0, 3], [4, 7]])
-
-      game.move_piece([[6, 6], [5, 6]])
-      game.move_piece([[0, 4], [1, 4]])
-
-      game.move_piece([[7, 1], [5, 2]])
-      game.move_piece([[1, 2], [2, 2]])
-
-      game.move_piece([[5, 2], [3, 3]])
-      game.move_piece([[2, 2], [3, 3]])
-
-      game.black_player
+      game.move_check_change([[1, 4], [3, 4]])
+      game.move_check_change([[6, 5], [5, 5]])
+      game.move_check_change([[0, 3], [4, 7]])
+      game.move_check_change([[6, 6], [5, 6]])
+      game.move_check_change([[0, 4], [1, 4]])
+      game.move_check_change([[7, 1], [5, 2]])
+      game.move_check_change([[1, 2], [2, 2]])
+      game.move_check_change([[5, 2], [3, 3]])
+      game.move_check_change([[2, 2], [3, 3]])
+      puts game.board_obj
 
       game.opponent_in_check(game.player.colour)
       expect(game.W_K.in_check).to eq(false)
@@ -255,12 +245,12 @@ describe Chess do
     end
 
     it 'white pawn advances, king can not move into check' do
-      game.move_piece([[1, 5], [3, 5]])
-      game.move_piece([[6, 5], [5, 5]])
-      game.move_piece([[1, 6], [3, 6]])
-      game.move_piece([[7, 4], [6, 5]])
-      game.move_piece([[3, 5], [4, 5]])
-      game.black_player
+      game.move_check_change([[1, 5], [3, 5]])
+      game.move_check_change([[6, 5], [5, 5]])
+      game.move_check_change([[1, 6], [3, 6]])
+      game.move_check_change([[7, 4], [6, 5]])
+      game.move_check_change([[3, 5], [4, 5]])
+
       piece = game.board_obj.board[6][5]
       valid_moves = game.allowed_moves(piece)
       expect(game.moving_into_check(piece, valid_moves)).to eq([[7, 4]])
@@ -282,27 +272,17 @@ describe Chess do
     end
 
     it 'white pawn advances, in front of king but no check' do
-      game.move_piece([[1, 5], [3, 5]])
-      game.black_player
-      game.move_piece([[6, 5], [5, 5]])
-      game.white_player
-      game.move_piece([[1, 6], [3, 6]])
-      game.black_player
-      game.move_piece([[7, 4], [6, 5]])
-      game.white_player
-      game.move_piece([[3, 6], [4, 6]])
-      game.black_player
-      game.move_piece([[5, 5], [4, 6]])
-      game.white_player
-      game.move_piece([[7, 1], [5, 2]])
-      game.black_player
-      game.move_piece([[6, 5], [5, 5]])
-      game.white_player
+      game.move_check_change([[1, 5], [3, 5]])
+      game.move_check_change([[6, 5], [5, 5]])
+      game.move_check_change([[1, 6], [3, 6]])
+      game.move_check_change([[7, 4], [6, 5]])
+      game.move_check_change([[3, 6], [4, 6]])
+      game.move_check_change([[5, 5], [4, 6]])
+      game.move_check_change([[7, 1], [5, 2]])
+      game.move_check_change([[6, 5], [5, 5]])
 
-      game.opponent_in_check(game.player.colour)
       expect(game.B_K.in_check).to eq(false)
-      game.move_piece([[3, 5], [4, 5]])
-      game.opponent_in_check(game.player.colour)
+      game.move_check_change([[3, 5], [4, 5]])
       expect(game.B_K.in_check).to eq(false)
     end
 
@@ -318,14 +298,43 @@ describe Chess do
       game.move_check_change([[7, 1], [5, 2]])
       game.move_check_change([[6, 5], [5, 5]])
       game.move_check_change([[3, 5], [4, 5]])
-      puts game.board_obj
 
       piece = game.board_obj.board[5][5]
       valid_moves = game.allowed_moves(piece)
       expect(game.moving_into_check(piece, valid_moves)).to eq([[6, 5],[4, 5],[4, 4]])
+    end
+  end
 
+
+  context 'test for castling' do
+    before do
+      game.place_pieces
     end
 
+    it 'white king moved' do
+      game.move_check_change([[1, 5], [3, 5]])
+      game.move_check_change([[6, 5], [5, 5]])
+      expect(game.W_K.piece_moved).to eq(false)
+      game.move_check_change([[0, 4], [1, 5]])
+      expect(game.W_K.piece_moved).to eq(true)
+      game.move_check_change([[6, 3], [5, 3]])
+      game.move_check_change([[1, 5], [0, 4]])
+      expect(game.W_K.piece_moved).to eq(true)
+      puts game.board_obj
+    end
+
+    it 'black king moved' do
+      game.move_check_change([[1, 5], [3, 5]])
+      game.move_check_change([[6, 5], [5, 5]])
+      game.move_check_change([[0, 4], [1, 5]])
+      expect(game.B_K.piece_moved).to eq(false)
+      game.move_check_change([[7, 4], [6, 5]])
+      expect(game.B_K.piece_moved).to eq(true)
+      puts game.board_obj
+    end
+
+
   end
+
 
 end

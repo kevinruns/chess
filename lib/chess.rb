@@ -177,7 +177,6 @@ class Chess
 
       # check coords on board
       direction_array.select! { |coord| (coord[0].between?(0, 7) && coord[1].between?(0, 7)) }
-
       # valid moves blocked by pieces and add valid attack squares
       direction_array.each do |move_square|
         square = @board_obj.board[move_square[0]][move_square[1]]
@@ -250,6 +249,7 @@ class Chess
         return true
       end
     end
+    king_under_attack.out_of_check
     return false
   end
 
@@ -277,10 +277,14 @@ class Chess
     @player = @black_player
   end
  
+  def opponent_colour(player)
+    player == @white_player ? 'BLACK' : 'WHITE'
+  end
+
   # move piece; check for check; change player
   def move_check_change(position_array)
     move_piece(position_array)
-    puts "CHECK" if opponent_in_check(player.colour)
+    puts "#{opponent_colour(player)} KING IN CHECK!" if opponent_in_check(player.colour)
     change_player
   end
 
