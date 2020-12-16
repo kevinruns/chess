@@ -267,27 +267,17 @@ describe Chess do
     end
 
     it 'white pawn advances, king puts king in check diagonally' do
-      game.move_piece([[1, 5], [3, 5]])
-      game.black_player
-      game.move_piece([[6, 5], [5, 5]])
-      game.white_player
-      game.move_piece([[1, 6], [3, 6]])
-      game.black_player
-      game.move_piece([[7, 4], [6, 5]])
-      game.white_player
-      game.move_piece([[3, 6], [4, 6]])
-      game.black_player
-      game.move_piece([[5, 5], [4, 6]])
-      game.white_player
-      game.move_piece([[0, 1], [2, 2]])
-      game.black_player
-      game.move_piece([[6, 5], [5, 5]])
-      game.white_player
+      game.move_check_change([[1, 5], [3, 5]])
+      game.move_check_change([[6, 5], [5, 5]])
+      game.move_check_change([[1, 6], [3, 6]])
+      game.move_check_change([[7, 4], [6, 5]])
+      game.move_check_change([[3, 6], [4, 6]])
+      game.move_check_change([[5, 5], [4, 6]])
+      game.move_check_change([[0, 1], [2, 2]])
+      game.move_check_change([[6, 5], [5, 5]])
 
-      game.opponent_in_check(game.player.colour)
       expect(game.B_K.in_check).to eq(false)
-      game.move_piece([[3, 5], [4, 6]])
-      game.opponent_in_check(game.player.colour)
+      game.move_check_change([[3, 5], [4, 6]])
       expect(game.B_K.in_check).to eq(true)
     end
 
