@@ -244,6 +244,7 @@ class Chess
 
     attack_pieces.each do |piece|
       moves = allowed_moves(piece)
+      moves.select! { |move| move[1] != piece.position[1] } if piece.instance_of?(Pawn) 
       if moves&.length.positive? && moves.include?(king_under_attack.position)
         king_under_attack.now_in_check
         return true
@@ -274,6 +275,13 @@ class Chess
 
   def black_player
     @player = @black_player
+  end
+ 
+  # move piece; check for check; change player
+  def move_check_change(position_array)
+    move_piece(position_array)
+    puts "CHECK" if opponent_in_check(player.colour)
+    change_player
   end
 
 end

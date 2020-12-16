@@ -242,12 +242,100 @@ describe Chess do
       game.move_piece([[5, 2], [3, 3]])
       game.move_piece([[2, 2], [3, 3]])
 
-      puts game.board_obj
       game.black_player
 
       game.opponent_in_check(game.player.colour)
       expect(game.W_K.in_check).to eq(false)
     end
+  end
+
+  context 'test for pawn check' do
+    before do
+      game.place_pieces
+    end
+
+    it 'white pawn advances, king can not move into check' do
+      game.move_piece([[1, 5], [3, 5]])
+      game.move_piece([[6, 5], [5, 5]])
+      game.move_piece([[1, 6], [3, 6]])
+      game.move_piece([[7, 4], [6, 5]])
+      game.move_piece([[3, 5], [4, 5]])
+      game.black_player
+      piece = game.board_obj.board[6][5]
+      valid_moves = game.allowed_moves(piece)
+      expect(game.moving_into_check(piece, valid_moves)).to eq([[7, 4]])
+    end
+
+    it 'white pawn advances, king puts king in check diagonally' do
+      game.move_piece([[1, 5], [3, 5]])
+      game.black_player
+      game.move_piece([[6, 5], [5, 5]])
+      game.white_player
+      game.move_piece([[1, 6], [3, 6]])
+      game.black_player
+      game.move_piece([[7, 4], [6, 5]])
+      game.white_player
+      game.move_piece([[3, 6], [4, 6]])
+      game.black_player
+      game.move_piece([[5, 5], [4, 6]])
+      game.white_player
+      game.move_piece([[0, 1], [2, 2]])
+      game.black_player
+      game.move_piece([[6, 5], [5, 5]])
+      game.white_player
+
+      game.opponent_in_check(game.player.colour)
+      expect(game.B_K.in_check).to eq(false)
+      game.move_piece([[3, 5], [4, 6]])
+      game.opponent_in_check(game.player.colour)
+      expect(game.B_K.in_check).to eq(true)
+    end
+
+    it 'white pawn advances, in front of king but no check' do
+      game.move_piece([[1, 5], [3, 5]])
+      game.black_player
+      game.move_piece([[6, 5], [5, 5]])
+      game.white_player
+      game.move_piece([[1, 6], [3, 6]])
+      game.black_player
+      game.move_piece([[7, 4], [6, 5]])
+      game.white_player
+      game.move_piece([[3, 6], [4, 6]])
+      game.black_player
+      game.move_piece([[5, 5], [4, 6]])
+      game.white_player
+      game.move_piece([[7, 1], [5, 2]])
+      game.black_player
+      game.move_piece([[6, 5], [5, 5]])
+      game.white_player
+
+      game.opponent_in_check(game.player.colour)
+      expect(game.B_K.in_check).to eq(false)
+      game.move_piece([[3, 5], [4, 5]])
+      game.opponent_in_check(game.player.colour)
+      expect(game.B_K.in_check).to eq(false)
+    end
+
+
+    it 'white pawn advances, king limited moves' do
+ 
+      game.move_check_change([[1, 5], [3, 5]])
+      game.move_check_change([[6, 5], [5, 5]])
+      game.move_check_change([[1, 6], [3, 6]])
+      game.move_check_change([[7, 4], [6, 5]])
+      game.move_check_change([[3, 6], [4, 6]])
+      game.move_check_change([[5, 5], [4, 6]])
+      game.move_check_change([[7, 1], [5, 2]])
+      game.move_check_change([[6, 5], [5, 5]])
+      game.move_check_change([[3, 5], [4, 5]])
+      puts game.board_obj
+
+      piece = game.board_obj.board[5][5]
+      valid_moves = game.allowed_moves(piece)
+      expect(game.moving_into_check(piece, valid_moves)).to eq([[6, 5],[4, 5],[4, 4]])
+
+    end
 
   end
+
 end
