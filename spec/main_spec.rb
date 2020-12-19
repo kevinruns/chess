@@ -174,6 +174,8 @@ describe Chess do
       game.move_piece([[6, 4], [4, 4]])
       game.move_piece([[0, 3], [4, 7]])
       game.black_player
+      puts game.board_obj
+
       piece = game.board_obj.board[6][5]
       valid_moves = game.allowed_moves(piece)
       expect(game.moving_into_check(piece, valid_moves)).to eq([])
