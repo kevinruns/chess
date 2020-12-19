@@ -1,7 +1,7 @@
 
 # king
 class King < Piece
-  attr_accessor :code, :in_check
+  attr_accessor :code, :in_check, :piece_moved
 
   def initialize(colour, position)
     super(colour, position)
