@@ -306,7 +306,7 @@ describe Chess do
   end
 
 
-  context 'test for castling' do
+  context 'test for moving pieces' do
     before do
       game.place_pieces
     end
@@ -320,7 +320,6 @@ describe Chess do
       game.move_check_change([[6, 3], [5, 3]])
       game.move_check_change([[1, 5], [0, 4]])
       expect(game.W_K.piece_moved).to eq(true)
-      puts game.board_obj
     end
 
     it 'black king moved' do
@@ -330,9 +329,79 @@ describe Chess do
       expect(game.B_K.piece_moved).to eq(false)
       game.move_check_change([[7, 4], [6, 5]])
       expect(game.B_K.piece_moved).to eq(true)
-      puts game.board_obj
+    end
+  end
+
+
+  context 'test for castling' do
+    before do
+      game.place_pieces
+    end
+  
+    it 'white king castling right' do
+      game.move_check_change([[1, 4], [3, 4]])
+      game.move_check_change([[6, 3], [5, 3]])
+      game.move_check_change([[0, 5], [3, 2]])
+      game.move_check_change([[7, 2], [3, 6]])
+      game.move_check_change([[0, 6], [2, 5]])
+      game.move_check_change([[7, 1], [5, 2]])
+      game.move_check_change([[0, 4], [0, 6]])
+
+      piece = game.board_obj.board[0][5]
+      valid_moves = game.allowed_moves(piece)
+      expect(game.moving_into_check(piece, valid_moves)).to eq([[0, 4]])
     end
 
+    it 'black king castling left' do
+      game.move_check_change([[1, 4], [3, 4]])
+      game.move_check_change([[6, 3], [5, 3]])
+      game.move_check_change([[0, 5], [3, 2]])
+      game.move_check_change([[7, 2], [3, 6]])
+      game.move_check_change([[0, 6], [2, 5]])
+      game.move_check_change([[7, 1], [5, 2]])
+      game.move_check_change([[0, 4], [0, 6]])
+      game.move_check_change([[7, 3], [6, 3]])
+      game.move_check_change([[1, 7], [2, 7]])
+
+      game.move_check_change([[7, 4], [7, 2]])
+
+      piece = game.board_obj.board[7][3]
+      valid_moves = game.allowed_moves(piece)
+      expect(game.moving_into_check(piece, valid_moves)).to eq([[7, 4]])
+    end
+
+
+    it 'black king castling right' do
+      game.move_check_change([[1, 3], [3, 3]])
+      game.move_check_change([[6, 4], [5, 4]])
+      game.move_check_change([[0, 2], [3, 5]])
+      game.move_check_change([[7, 5], [6, 3]])
+      game.move_check_change([[0, 1], [2, 2]])
+      game.move_check_change([[7, 6], [5, 5]])
+      game.move_check_change([[0, 3], [2, 3]])
+      game.move_check_change([[7, 4], [7, 6]])
+
+      piece = game.board_obj.board[7][5]
+      valid_moves = game.allowed_moves(piece)
+      expect(game.moving_into_check(piece, valid_moves)).to eq([[7, 4]])
+    end
+
+    it 'white king castling left' do
+      game.move_check_change([[1, 3], [3, 3]])
+      game.move_check_change([[6, 4], [5, 4]])
+      game.move_check_change([[0, 2], [3, 5]])
+      game.move_check_change([[7, 5], [6, 3]])
+      game.move_check_change([[0, 1], [2, 2]])
+      game.move_check_change([[7, 6], [5, 5]])
+      game.move_check_change([[0, 3], [2, 3]])
+      game.move_check_change([[7, 4], [7, 6]])
+      game.move_check_change([[0, 4], [0, 2]])
+      puts game.board_obj
+
+      piece = game.board_obj.board[0][3]
+      valid_moves = game.allowed_moves(piece)
+      expect(game.moving_into_check(piece, valid_moves)).to eq([[0, 4], [1, 3]])
+    end
 
   end
 
