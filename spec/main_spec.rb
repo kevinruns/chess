@@ -340,6 +340,7 @@ describe Chess do
       game.place_pieces
     end
   
+    # TODO check king allowed moves
     it 'white king castling right' do
       game.move_check_change([[1, 4], [3, 4]])
       game.move_check_change([[6, 3], [5, 3]])
@@ -398,11 +399,60 @@ describe Chess do
       game.move_check_change([[0, 3], [2, 3]])
       game.move_check_change([[7, 4], [7, 6]])
       game.move_check_change([[0, 4], [0, 2]])
-      puts game.board_obj
 
       piece = game.board_obj.board[0][3]
       valid_moves = game.allowed_moves(piece)
       expect(game.moving_into_check(piece, valid_moves)).to eq([[0, 4], [1, 3]])
+    end
+
+  end
+
+
+  context 'test for check mate' do
+    before do
+      game.place_pieces
+    end
+  
+    it 'white check mating black queen' do
+      game.move_check_change([[1, 4], [3, 4]])
+      game.move_check_change([[6, 7], [4, 7]])
+      game.move_check_change([[0, 5], [1, 4]])
+      game.move_check_change([[6, 6], [4, 6]])
+      game.move_check_change([[0, 1], [2, 2]])
+      game.move_check_change([[6, 5], [4, 5]])
+      game.move_check_change([[1, 4], [4, 7]])
+      game.move_check_change([[7, 7], [4, 7]])
+      game.move_check_change([[0, 3], [4, 7]])
+      expect(game.check_mate(game.player)).to eq(true)
+    end
+
+    it 'black check mating white queen' do
+
+      game.move_check_change([[1, 4], [3, 4]])
+      game.move_check_change([[6, 4], [4, 4]])
+      game.move_check_change([[0, 6], [2, 5]])
+      game.move_check_change([[6, 3], [4, 3]])
+      game.move_check_change([[3, 4], [4, 3]])
+      game.move_check_change([[7, 3], [4, 3]])
+      game.move_check_change([[0, 5], [4, 1]])
+      game.move_check_change([[4, 3], [4, 1]])
+      game.move_check_change([[0, 4], [0, 6]])
+      game.move_check_change([[7, 6], [5, 5]])
+      game.move_check_change([[0, 5], [0, 4]])
+      game.move_check_change([[5, 5], [3, 6]])
+      game.move_check_change([[0, 4], [4, 4]])
+      game.move_check_change([[7, 5], [6, 4]])
+      game.move_check_change([[0, 6], [0, 7]])
+      game.move_check_change([[6, 2], [4, 2]])
+      game.move_check_change([[1, 2], [2, 2]])
+      game.move_check_change([[7, 1], [6, 1]])
+      game.move_check_change([[0, 3], [2, 1]])
+      game.move_check_change([[4, 1], [0, 5]])
+      game.move_check_change([[2, 5], [0, 6]])
+      game.move_check_change([[3, 6], [1, 5]])
+
+      puts game.board_obj
+      expect(game.check_mate(game.player)).to eq(true)
     end
 
   end
