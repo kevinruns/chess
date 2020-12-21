@@ -18,11 +18,6 @@ game.place_pieces
 system 'clear'
 puts game.board_obj
 
-# game.move_piece([[1, 3],[3, 3]])
-# game.move_piece([[0, 2],[4, 6]])
-
-# puts game.board_obj
-
 
 while true
   position_array = game.select_and_move(game.player)

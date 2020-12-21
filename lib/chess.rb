@@ -65,7 +65,7 @@ class Chess
     end
   end
 
-  # after move by playerA, check every piece of playerB to see if playerA in check
+  # for each possible move by playerA piece, check moves of every piece of playerB to see if playerA in check
   def moving_into_check(piece, valid_moves)
     valid_not_in_check = []
     old_position = piece.position
@@ -129,7 +129,6 @@ class Chess
   end
 
   def castling_move(position_array)
-    #    p "castling #{position_array}"
     case position_array
     when [[0, 4], [0, 2]]
       move_piece([[0, 0], [0, 3]])
@@ -165,14 +164,10 @@ class Chess
     board_obj.board[new_position[0]][new_position[1]] = piece_to_move
   end
 
-  # method to select piece to move; returns piece position & possible moves
-  # CHANGE IDENTIFY ALL MOVES FIRST. IF NONE CHECK MATE
-  def select_piece(player)
-    piece = ""
-    valid_moves_no_check = []
-
+  # TODO exit if check mate. need to improve
+  # this method makes an array of all allowed moves; for check mate no moves allowed
+  def check_mate(player)
     player_pieces = []
-
     if player.colour == "BLACK"
       player_pieces = @black_pieces
     elsif player.colour == "WHITE"
@@ -183,9 +178,9 @@ class Chess
 
     all_moves = []
 
+    # TODO create seperate function check for check mate
     player_pieces.each do |piece|
       moves = allowed_moves(piece)
-      moves = add_castling_moves(piece, moves)
       all_moves << moving_into_check(piece, moves)
     end
 
@@ -193,9 +188,21 @@ class Chess
       puts "CHECK MATE"
       exit
     end
+  end
 
+  # method to select piece to move; returns piece position & possible moves
+  # CHANGE IDENTIFY ALL MOVES FIRST. IF NONE CHECK MATE
+  def select_piece(player)
+    p "Select piece"
+    piece = ""
+    moves = []
 
-    until defined?(piece.colour) && valid_piece?(player, piece) && valid_moves_no_check.length.positive?
+    king = (player.colour == 'WHITE') ? @W_K : @B_K
+    if king.in_check
+      check_mate(player)
+    end
+
+    until defined?(piece.colour) && valid_piece?(player, piece) && moves.length.positive?
       piece_input = prompt_for_piece
       piece_pos = format_coords(piece_input)
       rank = piece_pos[0]
@@ -204,15 +211,16 @@ class Chess
 
       piece = @board_obj.board[rank][file]
       moves = allowed_moves(piece)
-      moves = add_castling_moves(piece, moves)
-      valid_moves_no_check = moving_into_check(piece, moves)
+      moves = moving_into_check(piece, moves)
+      moves = add_castling_moves(piece, moves) if piece.instance_of?(King)
     end
-    [piece.position, valid_moves_no_check]
+    [piece.position, moves]
   end
 
   def add_castling_moves(piece, valid_moves)
     castling_positions = []
 
+    # already checking for King when called TODO
     if piece.instance_of?(King)
       king_not_moved = !piece.piece_moved
       king_colour = piece.colour
@@ -224,7 +232,7 @@ class Chess
       left_rook_square = board_obj.board[row][0]
       left_rook_not_moved = defined?(left_rook_square.colour) && !left_rook_square.piece_moved
 
-      castling_positions << [row, 1] if left_empty && left_not_attacked && left_rook_not_moved
+      castling_positions << [row, 2] if left_empty && left_not_attacked && left_rook_not_moved
 
       # right side
       right_empty = board_obj.board[row][5] == " " && board_obj.board[row][6] == " "
@@ -336,34 +344,6 @@ class Chess
     king_under_attack.out_of_check
     false
   end
-
-  # def check_for_mate(defending_colour)
-  #   defending_pieces = []
-
-  #   if defending_colour == "BLACK"
-  #     defending_pieces = @black_pieces
-  #   elsif defending_colour == "WHITE"
-  #     defending_pieces = @white_pieces
-  #   else
-  #     print "ERROR"
-  #   end
-
-  #   defending_pieces.each do | piece |
-
-  #     allowed_moves = allowed_moves(piece)
-  #     allowed_moves.each do |test_position|
-  #       old_position = piece.position
-  #       move_piece([old_position, test_position])
-  #       change_player
-  #       return false unless opponent_in_check(player.colour)
-
-  #       change_player
-  #       undo_move(test_position)
-  #     end
-  #     true
-  #   end
-  # end
-
 
   def format_coords(coords)
     coord_array = coords.split('')
