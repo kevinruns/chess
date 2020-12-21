@@ -123,7 +123,10 @@ class Chess
   end
 
   def select_and_move(player)
+    # select piece return nil,[] if check mate
     old_position, move_array = select_piece(player)
+    return nil if old_position.nil?
+
     new_position = select_position(move_array)
     [old_position, new_position]
   end
@@ -164,7 +167,6 @@ class Chess
     board_obj.board[new_position[0]][new_position[1]] = piece_to_move
   end
 
-  # TODO exit if check mate. need to improve
   # this method makes an array of all allowed moves; for check mate no moves allowed
   def check_mate(player)
     player_pieces = []
@@ -185,21 +187,22 @@ class Chess
     end
 
     if all_moves.flatten.length.zero?
-      puts "CHECK MATE"
-      exit
+      puts "******** CHECK MATE ********"
+      return true
+    else
+      return false
     end
   end
 
   # method to select piece to move; returns piece position & possible moves
   # CHANGE IDENTIFY ALL MOVES FIRST. IF NONE CHECK MATE
   def select_piece(player)
-    p "Select piece"
     piece = ""
     moves = []
 
     king = (player.colour == 'WHITE') ? @W_K : @B_K
-    if king.in_check
-      check_mate(player)
+    if king.in_check && check_mate(player)
+      return [nil, []]
     end
 
     until defined?(piece.colour) && valid_piece?(player, piece) && moves.length.positive?
