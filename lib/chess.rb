@@ -98,8 +98,9 @@ class Chess
 
   def undo_move(undo_position)
     piece = board_obj.board[undo_position[0]][undo_position[1]]
+    board_obj.board[piece.position[0]][piece.position[1]] = " "
     if @piece_taken
-      board_obj.board[piece.position[0]][piece.position[1]] = @removed_piece
+      board_obj.board[@removed_piece.position[0]][@removed_piece.position[1]] = @removed_piece
       if @removed_piece.colour == 'WHITE'
         @white_pieces << @removed_piece
       elsif @removed_piece.colour == 'BLACK'
@@ -107,8 +108,6 @@ class Chess
       else
         puts "ERROR"
       end
-    else
-      board_obj.board[piece.position[0]][piece.position[1]] = " "
     end
 
     # revert piece position
