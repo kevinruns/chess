@@ -144,18 +144,42 @@ class Chess
     end
   end
 
+  def pawn_move_two(position_array)
+    old_position = position_array[0]
+    new_position = position_array[1]
+    pawn = board_obj.board[old_position[0]][old_position[1]]
+    white_pawn_two = (old_position[0] == 1 && new_position[0] == 3)
+    black_pawn_two = (old_position[0] == 6 && new_position[0] == 4)
+
+    pawn.moved_two_squares = white_pawn_two || black_pawn_two
+  end
+
   # position array = [old_position, new_position] from select_and_move
   def move_piece(position_array)
     old_position = position_array[0]
     piece_to_move = board_obj.board[old_position[0]][old_position[1]]
 
     castling_move(position_array) if piece_to_move.instance_of?(King)
+    pawn_move_two(position_array) if piece_to_move.instance_of?(Pawn)
 
     board_obj.board[old_position[0]][old_position[1]] = " "
 
     new_position = position_array[1]
+
     piece_to_move.new_position(new_position)
     new_square = board_obj.board[new_position[0]][new_position[1]]
+
+    if enpassant_square(new_position)
+      rank = new_position[0]
+      file = new_position[1]
+
+      adjust = piece_to_move.colour == 'WHITE' ? -1 : 1
+      if board_obj.board[rank + adjust][file].instance_of?(Pawn)
+        remove_piece(board_obj.board[rank+adjust][file])
+        board_obj.board[rank+adjust][file] = ' '
+      end
+
+    end
 
     if new_square != " "
       remove_piece(new_square)
@@ -266,6 +290,26 @@ class Chess
     false
   end
 
+  # method to check if valid enpassant move
+  def enpassant_square(move_square)
+
+    adjust = 0
+    if move_square[0] == 5
+      adjust = -1
+    elsif move_square[0] == 2
+      adjust = 1
+    end
+  
+    enp_square = @board_obj.board[move_square[0] + adjust][move_square[1]]
+
+    if defined?(enp_square.moved_two_squares) && (enp_square.moved_two_squares)
+      return true
+    else
+      return false
+    end
+
+  end
+
   # valid moves, onboard, and not blocked
   def valid_squares(move_array, piece)
     new_move_array = []
@@ -281,9 +325,11 @@ class Chess
           if piece.position[1] != move_square[1]
             if square != " "
               new_move_array << move_square if square.colour != piece.colour
+            elsif enpassant_square(move_square)
+              new_move_array << move_square
             end
             break
-          # case if piece in way
+          # case if piece in way            
           elsif square != " "
             break
           end
@@ -340,7 +386,6 @@ class Chess
       moves.select! { |move| move[1] != piece.position[1] } if piece.instance_of?(Pawn)
       if moves&.length.positive? && moves.include?(king_under_attack.position)
         king_under_attack.now_in_check
-#        puts "CHECK MATE" if check_for_mate(attacking_colour)
         return true
       end
     end
@@ -381,6 +426,5 @@ class Chess
     move_piece(position_array)
     puts "#{opponent_colour(player)} KING IN CHECK!" if opponent_in_check(player.colour)
     change_player
-#    check_for_mate(player.colour)
   end
 end

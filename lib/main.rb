@@ -21,7 +21,7 @@ puts game.board_obj
 
 while true
   position_array = game.select_and_move(game.player)
-  break if position_array = nil
+  break if position_array == nil
   game.move_check_change(position_array)
   puts game.board_obj
 end
