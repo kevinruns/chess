@@ -1,16 +1,17 @@
 # pawns
 class Pawn < Piece
-  attr_accessor :code
+  attr_accessor :code, :moved_two_squares
 
   def initialize(colour, position)
     super(colour, position)
     @code = ChessConstants::PIECE_CODES.dig(:PAWN, colour.to_sym)
+    @moved_two_squares = false
   end
 
   def all_moves(position = @position)
     moves = []
-    one_square = colour == 'WHITE' ? 1 : -1;
-    two_squares = colour == 'WHITE' ? 2 : -2;
+    one_square = colour == 'WHITE' ? 1 : -1
+    two_squares = colour == 'WHITE' ? 2 : -2
 
     moves[0] = [[position[0] + one_square, position[1]]]
     if @position == @initial_position
