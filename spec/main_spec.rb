@@ -454,8 +454,101 @@ describe Chess do
       puts game.board_obj
       expect(game.check_mate(game.player)).to eq(true)
     end
+  end
+
+  context 'pawn moved_two_squares variable tests' do
+    before do
+      game.place_pieces
+    end
+  
+    it 'moved_two_squares variable not set for white pawn' do
+      game.move_check_change([[1, 4], [2, 4]])
+      piece = game.board_obj.board[2][4]
+      expect(piece.moved_two_squares).to eq(false)
+    end
+
+    it 'setting moved_two_squares variable for white pawn' do
+      game.move_check_change([[1, 4], [3, 4]])
+      piece = game.board_obj.board[3][4]
+      expect(piece.moved_two_squares).to eq(true)
+    end
+
+    it 'un setting moved_two_squares variable for white pawn' do
+      game.move_check_change([[1, 4], [3, 4]])
+      game.move_check_change([[3, 4], [4, 4]])
+      piece = game.board_obj.board[4][4]
+      expect(piece.moved_two_squares).to eq(false)
+      puts game.board_obj
+    end
+
+    it 'moved_two_squares variable not set for black pawn' do
+      game.move_check_change([[6, 1], [5, 1]])
+      piece = game.board_obj.board[5][1]
+      expect(piece.moved_two_squares).to eq(false)
+    end
+
+    it 'setting moved_two_squares variable for black pawn' do
+      game.move_check_change([[6, 3], [4, 3]])
+      piece = game.board_obj.board[4][3]
+      expect(piece.moved_two_squares).to eq(true)
+    end
+
+    it 'un setting moved_two_squares variable for black pawn' do
+      game.move_check_change([[6, 3], [4, 3]])
+      game.move_check_change([[4, 3], [3, 3]])
+      piece = game.board_obj.board[3][3]
+      expect(piece.moved_two_squares).to eq(false)
+      puts game.board_obj
+    end
+  end
+
+  context 'enpassant_square' do
+    before do
+      game.place_pieces
+    end
+  
+    it 'un setting moved_two_squares variable for white pawn' do
+      game.move_check_change([[1, 4], [3, 4]])
+      game.move_check_change([[3, 4], [4, 4]])
+      piece = game.board_obj.board[4][4]
+      expect(piece.moved_two_squares).to eq(false)
+      puts game.board_obj
+    end
 
   end
+
+
+  context 'pawns taking en passant' do
+    before do
+      game.place_pieces
+    end
+
+    it 'white pawn taking black' do
+      game.move_check_change([[1, 4], [3, 4]])
+      game.move_check_change([[6, 0], [4, 0]])
+      game.move_check_change([[3, 4], [4, 4]])
+      game.move_check_change([[6, 3], [4, 3]])
+      game.move_check_change([[4, 4], [5, 3]])
+      expect(game.board_obj.board[4][3]).to eq(" ")
+    end
+
+    it 'black pawn taking white' do
+      game.move_check_change([[1, 4], [3, 4]])
+      game.move_check_change([[6, 0], [4, 0]])
+      game.move_check_change([[1, 3], [3, 3]])
+      game.move_check_change([[4, 0], [3, 0]])
+      game.move_check_change([[1, 1], [3, 1]])
+      game.move_check_change([[3, 0], [2, 1]])
+      expect(game.board_obj.board[3][1]).to eq(" ")
+
+      puts game.board_obj
+    end
+
+
+  end
+
+
+
 
 
 end
