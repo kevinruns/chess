@@ -155,6 +155,7 @@ class Chess
 
   # position array = [old_position, new_position] from select_and_move
   def move_piece(position_array)
+
     old_position = position_array[0]
     piece_to_move = board_obj.board[old_position[0]][old_position[1]]
 
@@ -175,7 +176,7 @@ class Chess
       adjust = piece_to_move.colour == 'WHITE' ? -1 : 1
       if board_obj.board[rank + adjust][file].instance_of?(Pawn)
         remove_piece(board_obj.board[rank+adjust][file])
-        board_obj.board[rank+adjust][file] = ' '
+        board_obj.board[rank + adjust][file] = ' '
       end
 
     end
@@ -203,7 +204,6 @@ class Chess
 
     all_moves = []
 
-    # TODO create seperate function check for check mate
     player_pieces.each do |piece|
       moves = allowed_moves(piece)
       all_moves << moving_into_check(piece, moves)
@@ -297,6 +297,8 @@ class Chess
       adjust = -1
     elsif move_square[0] == 2
       adjust = 1
+    else
+      return false
     end
   
     enp_square = @board_obj.board[move_square[0] + adjust][move_square[1]]
