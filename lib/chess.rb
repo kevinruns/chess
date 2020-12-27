@@ -49,6 +49,16 @@ class Chess
     @removed_piece = ""
   end
 
+  def save_game
+    Dir.mkdir("saved_games") unless Dir.exist?("saved_games")
+    filename = "saved_games/#{object_id}.yml"
+
+    File.open(filename, "w") do |file|
+      file.puts YAML::dump(self)
+      file.puts ""
+    end
+  end
+
   def prompt_for_piece
     print "#{@player.name} piece to move: "
     gets.chomp
@@ -64,6 +74,7 @@ class Chess
       @board_obj.write(piece.position[0], piece.position[1], piece)
     end
   end
+
 
   # for each possible move by playerA piece, check moves of every piece of playerB to see if playerA in check
   def moving_into_check(piece, valid_moves)
@@ -428,4 +439,83 @@ class Chess
     puts "#{opponent_colour(player)} KING IN CHECK!" if opponent_in_check(player.colour)
     change_player
   end
+
+  def play_game
+    puts board_obj
+    while true
+      position_array = select_and_move(player)
+      break if position_array == nil
+      move_check_change(position_array)
+      system("clear")
+      puts board_obj
+      break if check_if_save
+    end
+  end
+
+
+  def setup_game
+    setup_option = ''
+    while (setup_option != 'Y' && setup_option != 'N')
+      print "\nWould you like to load a saved game? Y/N : "
+      setup_option = gets.chomp.upcase
+    end
+    if setup_option == 'Y'
+      load_game
+    else
+      play_game
+    end
+  end
+
+  def check_if_save
+    print "Press \'s\' to save game, else press any other key "
+    key = gets.chomp
+    if key.downcase == 's'
+      save_game
+      return true
+    else
+      return false
+    end
+  end
+  
+  def save_game
+    Dir.mkdir("saved_games") unless Dir.exist?("saved_games")
+    file = timestamp_filename(object_id.to_s)
+    filename = "saved_games/#{file}.yml"
+  
+    File.open(filename, "w") do |file|
+      file.puts YAML::dump(self)
+      file.puts ""
+    end
+  end
+  
+  def timestamp_filename(file)
+    dir  = File.dirname(file)
+    base = File.basename(file, ".*")
+    time = Time.now.to_i  # or format however you like
+    ext  = File.extname(file)
+    File.join(dir, "#{base}_#{time}#{ext}")
+  end
+  
+  def load_game
+    print "Select a file to load. \n"
+    files = Dir.entries("saved_games/.")
+    files.delete('.')
+    files.delete('..')
+    print "Files: #{files.join(" ")} \n"
+    file = select_file(files)
+    yaml = YAML.load_file("saved_games/#{file}")
+    system("clear")
+    yaml.play_game
+  end
+  
+  def select_file(files)
+    file = ""
+    until files.include?(file)
+      print "\nPlease enter file: "
+      file = gets.chomp
+    end
+    file
+  end
+
+
 end

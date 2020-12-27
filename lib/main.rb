@@ -1,4 +1,4 @@
-
+require "yaml"
 require_relative '../lib/chess'
 require_relative '../lib/board'
 require_relative '../lib/player'
@@ -16,13 +16,8 @@ require_relative '../lib/pieces/pawn'
 game = Chess.new
 game.place_pieces
 system 'clear'
-puts game.board_obj
+
+game.setup_game
 
 
-while true
-  position_array = game.select_and_move(game.player)
-  break if position_array == nil
-  game.move_check_change(position_array)
-  puts game.board_obj
-end
 

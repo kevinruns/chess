@@ -498,7 +498,6 @@ describe Chess do
       game.move_check_change([[4, 3], [3, 3]])
       piece = game.board_obj.board[3][3]
       expect(piece.moved_two_squares).to eq(false)
-      puts game.board_obj
     end
   end
 
@@ -512,7 +511,6 @@ describe Chess do
       game.move_check_change([[3, 4], [4, 4]])
       piece = game.board_obj.board[4][4]
       expect(piece.moved_two_squares).to eq(false)
-      puts game.board_obj
     end
 
   end
@@ -540,15 +538,31 @@ describe Chess do
       game.move_check_change([[1, 1], [3, 1]])
       game.move_check_change([[3, 0], [2, 1]])
       expect(game.board_obj.board[3][1]).to eq(" ")
-
-      puts game.board_obj
     end
-
-
   end
 
 
 
+  context 'debug pawn missing' do
+    before do
+      game.place_pieces
+    end
 
+    it 'white disappearing' do
+
+      game.move_check_change([[1, 4], [3, 4]])
+      game.move_check_change([[7, 1], [5, 0]])
+      game.move_check_change([[1, 3], [3, 3]])
+      game.move_check_change([[6, 4], [4, 4]])
+      game.move_check_change([[0, 6], [2, 5]])
+      game.move_check_change([[6, 2], [4, 2]])
+      game.move_check_change([[0, 1], [2, 2]])
+      game.move_check_change([[6, 3], [4, 3]])
+      puts game.board_obj
+
+      game.move_check_change([[3, 3], [4, 4]])
+      puts game.board_obj
+    end
+  end
 
 end
