@@ -2,6 +2,7 @@
 
 the odin project : ruby chess assignment
 
-code seems to be working
-need to play more to check for bugs
-also to refactor and add option to export game
+2 player chess game working
+can save and load games
+
+may spend more time later to refactor and add computer player
